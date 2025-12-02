@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/standalone.dart' as tz;
-import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:prayer_times/core/enums/notifications_enums.dart';
 import 'package:prayer_times/core/extensions/notifications_extensions.dart';
 import 'package:prayer_times/core/services/notifications/inotifications.dart';
@@ -16,9 +16,7 @@ final StreamController<NotificationResponse> selectNotificationStream =
     StreamController<NotificationResponse>.broadcast();
 
 @pragma('vm:entry-point')
-void notificationTapBackground(NotificationResponse notificationResponse) {
-  
-}
+void notificationTapBackground(NotificationResponse notificationResponse) {}
 
 class Notifications implements Inotifications {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
@@ -62,7 +60,7 @@ class Notifications implements Inotifications {
 
   @override
   void init() {
-    tz.initializeTimeZones();
+    tz_data.initializeTimeZones();
     final initializationSettings = InitializationSettings(
       android: AndroidInitializationSettings('@mipmap/ic_launcher'),
       iOS: DarwinInitializationSettings(
@@ -185,8 +183,10 @@ class Notifications implements Inotifications {
 
   @override
   void cancelAllScheduled() async {
-    for (var notification in (await flutterLocalNotificationsPlugin.pendingNotificationRequests())) {
-              cancel(notification.id);
-            }
+    for (var notification
+        in (await flutterLocalNotificationsPlugin
+            .pendingNotificationRequests())) {
+      cancel(notification.id);
+    }
   }
 }

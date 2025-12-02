@@ -41,6 +41,8 @@ dependencies:
   go_router: ^6.0.0
   flutter_svg: ^2.0.0
   drift: ^2.0.0
+  adhan_dart: ^1.2.0
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:
