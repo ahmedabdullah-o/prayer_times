@@ -23,9 +23,9 @@ enum NotificationDetailsEnum {
   prayer(
     NotificationDetails(
       android: AndroidNotificationDetails(
-        'general_channel',
-        'General Notifications',
-        channelDescription: 'General Notifications',
+        'prayer_channel',
+        'Prayer Notifications',
+        channelDescription: 'Prayer Notifications',
         importance: Importance.max,
         priority: Priority.high,
         playSound: true,

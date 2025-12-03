@@ -13,8 +13,6 @@ class HomeScreen extends ConsumerWidget {
     final prayerNames = PrayersEnums.values;
     final todayPrayerTimes = prayerTimes.todayPrayerTimes;
 
-    prayerTimes.scheduleTodayPrayerNotifications();
-
     return ListView.builder(
       itemCount: prayerNames.length,
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
