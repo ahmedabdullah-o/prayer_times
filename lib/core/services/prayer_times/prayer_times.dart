@@ -4,14 +4,13 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:prayer_times/core/enums/notifications_enums.dart';
+import 'package:prayer_times/core/enums/prayers_enums.dart';
 import 'package:prayer_times/core/services/notifications/notification_model.dart';
 import 'package:prayer_times/core/services/notifications/notifications_provider.dart';
 import 'package:prayer_times/core/services/prayer_times/iprayer_times.dart';
 
 //LocalImports
 import 'package:timezone/timezone.dart';
-
-final prayerTimesNames = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
 
 class PrayerTimes implements IPrayerTimes {
   final providerContainer = ProviderContainer();
@@ -60,7 +59,7 @@ class PrayerTimes implements IPrayerTimes {
         prayerTimes[j],
         getLocation("Africa/Cairo"),
       );
-      out[prayerTimesNames[j]] = scheduleAt;
+      out[PrayersEnums.values[j].name] = scheduleAt;
     }
     return out;
   }
@@ -73,16 +72,16 @@ class PrayerTimes implements IPrayerTimes {
 
     final prayerTimes = todayPrayerTimes;
 
-    for (final prayer in prayerTimesNames) {
-      if (prayerTimes[prayer] != null) {
+    for (final prayer in PrayersEnums.values) {
+      if (prayerTimes[prayer.name] != null) {
         notifications.schedule(
           NotificationModel(
-            prayerTimes[prayer].hashCode,
-            prayer,
-            "It's time to pray $prayer: ${DateFormat(DateFormat.HOUR24_MINUTE).format(prayerTimes[prayer]!)}",
+            prayerTimes[prayer.name].hashCode,
+            prayer.name,
+            "It's time to pray ${prayer.name}: ${DateFormat(DateFormat.HOUR24_MINUTE).format(prayerTimes[prayer.name]!)}",
             notificationDetails: NotificationDetailsEnum.prayer,
           ),
-          prayerTimes[prayer]!,
+          prayerTimes[prayer.name]!,
           matchDateTimeComponents: DateTimeComponents.dateAndTime,
         );
       }

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/standalone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:prayer_times/core/enums/notifications_enums.dart';
@@ -128,7 +127,7 @@ class Notifications implements Inotifications {
           .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin
           >()
-          ?.requestPermission();
+          ?.requestNotificationsPermission();
     }
   }
 
@@ -154,12 +153,10 @@ class Notifications implements Inotifications {
     DateTime scheduleAt, {
     DateTimeComponents? matchDateTimeComponents,
   }) async {
-    final locationName = await FlutterTimezone.getLocalTimezone();
+    final locationName = "Africa/Cairo";
     final location = tz.getLocation(locationName);
     final tzDateTime = tz.TZDateTime.from(scheduleAt, location);
     await flutterLocalNotificationsPlugin.zonedSchedule(
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
       notificationModel.id,
       notificationModel.title,
       notificationModel.body,
