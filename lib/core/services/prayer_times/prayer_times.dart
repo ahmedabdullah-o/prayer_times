@@ -8,6 +8,7 @@ import 'package:prayer_times/core/enums/prayers_enums.dart';
 import 'package:prayer_times/core/services/notifications/notification_model.dart';
 import 'package:prayer_times/core/services/notifications/notifications_provider.dart';
 import 'package:prayer_times/core/services/prayer_times/iprayer_times.dart';
+import 'package:timezone/data/latest.dart' as tz_data;
 
 //LocalImports
 import 'package:timezone/timezone.dart';
@@ -54,6 +55,7 @@ class PrayerTimes implements IPrayerTimes {
           ? prayerTimesNow.isha
           : prayerTimesTomorrow.isha,
     ];
+    tz_data.initializeTimeZones();
     for (int j = 0; j < 5; j++) {
       final scheduleAt = TZDateTime.from(
         prayerTimes[j],
