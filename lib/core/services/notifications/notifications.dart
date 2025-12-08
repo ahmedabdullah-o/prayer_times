@@ -161,8 +161,8 @@ class Notifications implements Inotifications {
       notificationModel.title,
       notificationModel.body,
       tzDateTime,
-      payload: notificationModel.payload,
       notificationModel.notificationDetails.details,
+      payload: notificationModel.payload,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       matchDateTimeComponents: matchDateTimeComponents,
     );
