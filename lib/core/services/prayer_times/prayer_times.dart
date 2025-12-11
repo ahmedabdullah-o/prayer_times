@@ -23,8 +23,8 @@ class PrayerTimes implements IPrayerTimes {
   //TODO: make params and notification sound customizable
   final params = adhan.CalculationMethodParameters.egyptian();
   @override
-  Map<String, DateTime> get todayPrayerTimes {
-    Map<String, DateTime> out = {};
+  Map<PrayersEnums, DateTime> get todayPrayerTimes {
+    Map<PrayersEnums, DateTime> out = {};
     final now = DateTime.now();
     final prayerTimesNow = adhan.PrayerTimes(
           coordinates: coords[selectedCoordsIndex],
@@ -38,10 +38,18 @@ class PrayerTimes implements IPrayerTimes {
           date: now.add(Duration(days: 1)),
           precision: true,
         );
+    final sunnahTimesNow = adhan.SunnahTimes(prayerTimesNow, precision: true),
+        sunnahTimesTomorrow = adhan.SunnahTimes(
+          prayerTimesTomorrow,
+          precision: true,
+        );
     final prayerTimes = [
       prayerTimesNow.fajr.isAfter(now)
           ? prayerTimesNow.fajr
           : prayerTimesTomorrow.fajr,
+      prayerTimesNow.sunrise.isAfter(now)
+          ? prayerTimesNow.sunrise
+          : prayerTimesTomorrow.sunrise,
       prayerTimesNow.dhuhr.isAfter(now)
           ? prayerTimesNow.dhuhr
           : prayerTimesTomorrow.dhuhr,
@@ -54,14 +62,20 @@ class PrayerTimes implements IPrayerTimes {
       prayerTimesNow.isha.isAfter(now)
           ? prayerTimesNow.isha
           : prayerTimesTomorrow.isha,
+      sunnahTimesNow.middleOfTheNight.isAfter(now)
+          ? sunnahTimesNow.middleOfTheNight
+          : sunnahTimesTomorrow.middleOfTheNight,
+      sunnahTimesNow.lastThirdOfTheNight.isAfter(now)
+          ? sunnahTimesNow.lastThirdOfTheNight
+          : sunnahTimesTomorrow.lastThirdOfTheNight,
     ];
     tz_data.initializeTimeZones();
-    for (int j = 0; j < 5; j++) {
+    for (int i = 0; i < PrayersEnums.values.length; i++) {
       final scheduleAt = TZDateTime.from(
-        prayerTimes[j],
+        prayerTimes[i],
         getLocation("Africa/Cairo"),
       );
-      out[PrayersEnums.values[j].name] = scheduleAt;
+      out[PrayersEnums.values[i]] = scheduleAt;
     }
     return out;
   }
@@ -99,18 +113,16 @@ class PrayerTimes implements IPrayerTimes {
     final prayerTimes = todayPrayerTimes;
 
     for (final prayer in PrayersEnums.values) {
-      if (prayerTimes[prayer.name] != null) {
-        notifications.schedule(
-          NotificationModel(
-            prayerTimes[prayer.name].hashCode,
-            prayer.name,
-            "It's time to pray ${prayer.name}: ${DateFormat(DateFormat.HOUR24_MINUTE).format(prayerTimes[prayer.name]!)}",
-            notificationDetails: NotificationDetailsEnum.prayer,
-          ),
-          prayerTimes[prayer.name]!,
-          matchDateTimeComponents: DateTimeComponents.dateAndTime,
-        );
-      }
+      notifications.schedule(
+        NotificationModel(
+          prayerTimes[prayer].hashCode,
+          prayer.name,
+          "It's time to pray ${prayer.name}: ${DateFormat(DateFormat.HOUR24_MINUTE).format(prayerTimes[prayer]!)}",
+          notificationDetails: NotificationDetailsEnum.prayer,
+        ),
+        prayerTimes[prayer]!,
+        matchDateTimeComponents: DateTimeComponents.dateAndTime,
+      );
     }
   }
 }

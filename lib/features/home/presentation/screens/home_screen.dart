@@ -14,13 +14,14 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final prayerTimes = ref.read(prayerTimesProvider);
     final prayerNames = PrayersEnums.values;
-    
+
     final todayPrayerTimes = prayerTimes.todayPrayerTimes;
     final upcoming = prayerTimes.nextPrayer;
 
     return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Placeholder(),
+        Placeholder(fallbackHeight: 20),
         Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -39,7 +40,7 @@ class HomeScreen extends ConsumerWidget {
                 prayerNames.length,
                 (i) => PrayerCard(
                   prayerNames[i].name,
-                  todayPrayerTimes[prayerNames[i].name]!,
+                  todayPrayerTimes[prayerNames[i]]!,
                   upcoming == prayerNames[i],
                   // TODO: use storage when ready to retrieve sound on/off state.
                   true, // storage not implemented yet to retrieve this preference. set to `true` temporarily.
