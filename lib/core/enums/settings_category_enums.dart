@@ -1,0 +1,1 @@
+enum SettingsCategoryEnums { notificationOnOff, notificationSound }

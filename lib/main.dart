@@ -16,7 +16,7 @@ void callbackDispatcher() {
     switch (task) {
       case "schedule_prayer_notifications":
         final prayerTimes = providerContainer.read(prayerTimesProvider);
-        prayerTimes.scheduleTodayPrayerNotifications();
+        prayerTimes.scheduleTodayPrayerNotifications(providerContainer.read(notificationsProvider));
       default:
         false;
     }

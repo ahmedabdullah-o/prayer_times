@@ -1,3 +1,1 @@
-enum SvgIconData {
-  icon,
-}
+enum SvgIconData { arrowLeft, arrowRight, soundOn, soundOff }

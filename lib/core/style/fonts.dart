@@ -36,6 +36,18 @@ class Fonts {
         letterSpacing: -0.5,
         fontFamily: 'MPLUSRounded1c',
       );
+  static TextStyle prayerCardText(bool upcoming) {
+    return TextStyle(
+      inherit: false,
+      color: app.Colors.text,
+      fontSize: 20,
+      fontWeight: upcoming ? FontWeight.w800 : FontWeight.w500,
+      letterSpacing: -0.5,
+      fontFamily: 'MPLUSRounded1c',
+      height: 1.26,
+    );
+  }
+
   static TextStyle navigationBarItem(bool active) {
     return TextStyle(
       inherit: false,

@@ -1,4 +1,8 @@
+import 'package:prayer_times/core/enums/prayers_enums.dart';
+import 'package:prayer_times/core/services/notifications/inotifications.dart';
+
 abstract class IPrayerTimes {
   Map<String, DateTime> get todayPrayerTimes;
-  Future<void> scheduleTodayPrayerNotifications();
+  PrayersEnums? get nextPrayer;
+  Future<void> scheduleTodayPrayerNotifications(Inotifications notifications);
 }

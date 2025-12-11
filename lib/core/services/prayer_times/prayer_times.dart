@@ -5,8 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:prayer_times/core/enums/notifications_enums.dart';
 import 'package:prayer_times/core/enums/prayers_enums.dart';
+import 'package:prayer_times/core/services/notifications/inotifications.dart';
 import 'package:prayer_times/core/services/notifications/notification_model.dart';
-import 'package:prayer_times/core/services/notifications/notifications_provider.dart';
 import 'package:prayer_times/core/services/prayer_times/iprayer_times.dart';
 import 'package:timezone/data/latest.dart' as tz_data;
 
@@ -67,8 +67,32 @@ class PrayerTimes implements IPrayerTimes {
   }
 
   @override
-  Future<void> scheduleTodayPrayerNotifications() async {
-    final notifications = providerContainer.read(notificationsProvider);
+  PrayersEnums? get nextPrayer {
+    final now = DateTime.now();
+    final prayerTimesNow = adhan.PrayerTimes(
+      coordinates: coords[selectedCoordsIndex],
+      calculationParameters: params,
+      date: now,
+      precision: true,
+    );
+    final prayers = {
+      prayerTimesNow.fajr: PrayersEnums.fajr,
+      prayerTimesNow.dhuhr: PrayersEnums.dhuhr,
+      prayerTimesNow.asr: PrayersEnums.asr,
+      prayerTimesNow.maghrib: PrayersEnums.maghrib,
+      prayerTimesNow.isha: PrayersEnums.isha,
+    };
+    final prayersTimes = prayers.keys.toList()..sort((a, b) => a.compareTo(b));
+    for (final prayer in prayersTimes) {
+      if (prayer.isAfter(now)) return prayers[prayer]!;
+    }
+    return null;
+  }
+
+  @override
+  Future<void> scheduleTodayPrayerNotifications(
+    Inotifications notifications,
+  ) async {
     notifications.init();
     notifications.cancelAll();
 
