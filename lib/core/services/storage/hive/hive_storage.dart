@@ -5,14 +5,13 @@ import 'package:flutter_timezone/timezone_info.dart';
 import 'package:hive/hive.dart';
 import 'package:prayer_times/core/enums/athan_sound_enums.dart';
 import 'package:prayer_times/core/enums/prayers_enums.dart';
-import 'package:prayer_times/core/enums/settings_category_enums.dart';
 import 'package:prayer_times/core/extensions/enum_extentions.dart';
 import 'package:prayer_times/core/services/storage/hive/ihive_storage.dart';
 
 class HiveStorage implements IHiveStorage {
-  late final LazyBox _notificationMuteSettingsBox;
-  late final LazyBox _notificationSoundSettingsBox;
-  late final LazyBox _generalSettingsBox;
+  late final Box _notificationMuteSettingsBox;
+  late final Box _notificationSoundSettingsBox;
+  late final Box _generalSettingsBox;
 
   final _notificationMuteDefault = <PrayersEnums, bool>{
     PrayersEnums.fajr: false,
@@ -26,10 +25,13 @@ class HiveStorage implements IHiveStorage {
   };
   final _notificationSoundDefault = <PrayersEnums, AthanSoundEnums>{
     PrayersEnums.fajr: AthanSoundEnums.abdulbasit,
+    PrayersEnums.sunrise: AthanSoundEnums.defaultSound,
     PrayersEnums.dhuhr: AthanSoundEnums.abdulbasit,
     PrayersEnums.asr: AthanSoundEnums.abdulbasit,
     PrayersEnums.maghrib: AthanSoundEnums.abdulbasit,
     PrayersEnums.isha: AthanSoundEnums.abdulbasit,
+    PrayersEnums.midnight: AthanSoundEnums.defaultSound,
+    PrayersEnums.lastThird: AthanSoundEnums.defaultSound,
   };
 
   final _generalDefault = <String, String>{
@@ -46,17 +48,15 @@ class HiveStorage implements IHiveStorage {
     "calculation_method": CalculationMethod.egyptian.name,
   };
 
-  void _init() async {
-    _notificationMuteSettingsBox = await Hive.openLazyBox("soundMuteSettings");
-    _notificationSoundSettingsBox = await Hive.openLazyBox(
-      "athanSoundSettings",
-    );
-    _generalSettingsBox = await Hive.openLazyBox('general');
+  Future<void> init() async {
+    _notificationMuteSettingsBox = await Hive.openBox("soundMuteSettings");
+    _notificationSoundSettingsBox = await Hive.openBox("athanSoundSettings");
+    _generalSettingsBox = await Hive.openBox('general');
   }
 
   @override
-  void setSavedCalculationMethod(CalculationMethod method) {
-    _generalSettingsBox.put("calculation_method", method.name);
+  Future<void> setSavedCalculationMethod(CalculationMethod method) {
+    return _generalSettingsBox.put("calculation_method", method.name);
   }
 
   @override
@@ -71,21 +71,24 @@ class HiveStorage implements IHiveStorage {
   }
 
   @override
-  void setNotificationMute(PrayersEnums prayer, bool muted) {
-    _notificationMuteSettingsBox.put(prayer.name, muted);
+  Future<void> setNotificationMute(PrayersEnums prayer, bool muted) {
+    return _notificationMuteSettingsBox.put(prayer.name, muted);
   }
 
   @override
   Future<bool> getNotificationMute(PrayersEnums prayer) async {
     return await _notificationMuteSettingsBox.get(
       prayer.name,
-      defaultValue: false,
+      defaultValue: _notificationMuteDefault[prayer],
     );
   }
 
   @override
-  void setNotificationSound(PrayersEnums prayer, AthanSoundEnums sound) {
-    _notificationSoundSettingsBox.put(prayer.name, sound.name);
+  Future<void> setNotificationSound(
+    PrayersEnums prayer,
+    AthanSoundEnums sound,
+  ) {
+    return _notificationSoundSettingsBox.put(prayer.name, sound.name);
   }
 
   @override
@@ -93,15 +96,15 @@ class HiveStorage implements IHiveStorage {
     final query =
         await _notificationSoundSettingsBox.get(
               prayer.name,
-              defaultValue: AthanSoundEnums.abdulbasit.name,
+              defaultValue: _notificationSoundDefault[prayer]!.name,
             )
             as String;
     return PrayersEnums.values.mapEnums[query];
   }
 
   @override
-  void setSavedCoordinates(Coordinates coordinates) {
-    _generalSettingsBox.putAll({
+  Future<void> setSavedCoordinates(Coordinates coordinates) {
+    return _generalSettingsBox.putAll({
       "latitude": coordinates.latitude,
       "longitude": coordinates.longitude,
     });
@@ -126,8 +129,8 @@ class HiveStorage implements IHiveStorage {
   }
 
   @override
-  void setLocation(TimezoneInfo location) {
-    _generalSettingsBox.put("location", location.identifier);
+  Future<void> setLocation(TimezoneInfo location) {
+    return _generalSettingsBox.put("location", location.identifier);
   }
 
   @override
@@ -143,8 +146,8 @@ class HiveStorage implements IHiveStorage {
   }
 
   @override
-  void setLocale(Locale locale) {
-    _generalSettingsBox.put(
+  Future<void> setLocale(Locale locale) {
+    return _generalSettingsBox.put(
       "locale",
       "${locale.languageCode}-${locale.countryCode}",
     );
