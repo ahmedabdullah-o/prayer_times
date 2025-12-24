@@ -1,21 +1,26 @@
 import 'dart:ui';
 
+import 'package:adhan_dart/adhan_dart.dart';
 import 'package:flutter_timezone/timezone_info.dart';
 import 'package:prayer_times/core/enums/athan_sound_enums.dart';
 import 'package:prayer_times/core/enums/prayers_enums.dart';
 
 abstract class IHiveStorage {
+  void setSavedCalculationMethod(CalculationMethod method);
+
+  Future<CalculationMethod> get savedCalculationMethod;
+
   void setNotificationMute(PrayersEnums prayer, bool muted);
 
-  bool getNotificationMute(PrayersEnums prayer);
+  Future<bool> getNotificationMute(PrayersEnums prayer);
 
   void setNotificationSound(PrayersEnums prayer, AthanSoundEnums sound);
 
-  AthanSoundEnums getNotificationSound(PrayersEnums prayer);
+  Future<AthanSoundEnums> getNotificationSound(PrayersEnums prayer);
 
-  void setSavedCoordinates(double longitude, double latitude);
+  void setSavedCoordinates(Coordinates coordinates);
 
-  Map<String, double> get savedCoordinates;
+  Coordinates get savedCoordinates;
 
   void setLocation(TimezoneInfo location);
 
