@@ -3,6 +3,6 @@ import 'package:prayer_times/core/services/notifications/inotifications.dart';
 
 abstract class IPrayerTimes {
   Map<PrayersEnums, DateTime> get todayPrayerTimes;
-  PrayersEnums? get nextPrayer;
+  PrayersEnums get nextPrayer;
   Future<void> scheduleTodayPrayerNotifications(Inotifications notifications);
 }

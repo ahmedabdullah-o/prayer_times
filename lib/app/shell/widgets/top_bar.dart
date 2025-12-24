@@ -1,86 +1,108 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:prayer_times/core/enums/prayers_enums.dart';
+import 'package:prayer_times/core/enums/svg_icon_data_enums.dart';
+import 'package:prayer_times/core/extensions/string_extensions.dart';
+import 'package:prayer_times/core/services/prayer_times/iprayer_times.dart';
+import 'package:prayer_times/core/services/prayer_times/prayer_times_provider.dart';
+import 'package:prayer_times/core/style/colors.dart' as app;
+import 'package:prayer_times/core/style/fonts.dart';
+import 'package:prayer_times/core/style/icons.dart';
 
-final _title = {'/home': 'TODAY', '/habits': "HABITS"};
-
-class TopBar extends StatelessWidget {
-  final String currentPath;
-  const TopBar(this.currentPath, {super.key});
+class TopBar extends ConsumerWidget {
+  final PrayersEnums nextPrayer;
+  const TopBar(this.nextPrayer, {super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      color: Colors.grey[900],
-      height: 48.0,
-      width: double.infinity,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final prayerTimes = ref.read(prayerTimesProvider);
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              GestureDetector(
-                onTap: () {},
-                child: Icon(Icons.person, size: 32, color: Colors.grey[600]),
-              ),
-              SizedBox(width: 12),
               Text(
-                _title[currentPath] ?? '',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+                nextPrayer.name.camelCaseToTitleCase(),
+                style: Fonts.topBarTitle,
               ),
+              _Location(),
             ],
           ),
-          _ProgressBar(40),
+          _NextPrayerTimeLeft(prayerTimes),
         ],
       ),
     );
   }
 }
 
-class _ProgressBar extends StatelessWidget {
-  final double completionRate;
-  const _ProgressBar(this.completionRate);
+class _NextPrayerTimeLeft extends ConsumerStatefulWidget {
+  final IPrayerTimes prayerTimes;
+  const _NextPrayerTimeLeft(this.prayerTimes);
+
+  @override
+  ConsumerState<_NextPrayerTimeLeft> createState() =>
+      _NextPrayerTimeLeftState();
+}
+
+class _NextPrayerTimeLeftState extends ConsumerState<_NextPrayerTimeLeft> {
+  late PrayersEnums _nextPrayer = widget.prayerTimes.nextPrayer;
+  late Duration _timeLeft = widget.prayerTimes.todayPrayerTimes[_nextPrayer]!
+      .difference(DateTime.now());
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        _timeLeft = widget.prayerTimes.todayPrayerTimes[_nextPrayer]!
+            .difference(DateTime.now());
+
+        if (_timeLeft.isNegative) {
+          _nextPrayer = widget.prayerTimes.nextPrayer;
+          _timeLeft = widget.prayerTimes.todayPrayerTimes[_nextPrayer]!
+              .difference(DateTime.now());
+        }
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _timer?.cancel();
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (completionRate > 100 || completionRate < 0) {
-      throw Exception(
-        'completion rate error: CompletionRate value must be between 0 and 100',
-      );
-    }
-    return Container(
-      width: 128,
-      height: 16,
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
-      child: Stack(
-        clipBehavior: Clip.antiAlias,
-        alignment: AlignmentGeometry.centerLeft,
+    return Text(
+      "${_timeLeft.inHours.toString().padLeft(2, '0')}:${(_timeLeft.inMinutes - _timeLeft.inHours * 60).toString().padLeft(2, '0')}:${(_timeLeft.inSeconds - _timeLeft.inMinutes * 60).toString().padLeft(2, '0')}",
+      style: Fonts.topBarTimeLeft,
+    );
+  }
+}
+
+class _Location extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {}, // TODO: Open location settings screen
+      child: Row(
+        spacing: 8,
         children: [
-          Container(
-            width: completionRate * 128 / 100,
-            height: 16,
-            decoration: BoxDecoration(
-              // borderRadius: BorderRadius.circular(6),
-              color: Colors.blue[50],
-            ),
+          SvgIcon(
+            SvgIconData.location,
+            width: 18,
+            height: 18,
+            color: app.Colors.text,
           ),
-          Container(
-            alignment: Alignment.centerLeft,
-            width: 128,
-            height: 16,
-            decoration: BoxDecoration(
-              border: Border.all(
-                width: 2.5,
-                color: Colors.white,
-                strokeAlign: BorderSide.strokeAlignInside,
-              ),
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
+          Text('Cairo', style: Fonts.location),
         ],
       ),
     );

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:prayer_times/core/enums/svg_icon_data_enums.dart';
+import 'package:prayer_times/core/style/colors.dart' as app;
+import 'package:prayer_times/core/style/fonts.dart';
+import 'package:prayer_times/core/style/icons.dart';
 
 class NavigationBar extends StatelessWidget {
   final String currentPath;
@@ -10,25 +14,31 @@ class NavigationBar extends StatelessWidget {
     return Container(
       height: 80,
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(color: Colors.grey[200]),
+      decoration: BoxDecoration(color: app.Colors.foreground),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _NavItem(
-            label: 'today',
-            iconData: Icons.checklist,
+            label: 'Prayers',
+            iconData: SvgIconData.mosque,
             showLabel: true,
             active: currentPath == '/home',
             onTap: () => context.go('/home'),
           ),
-          _AddButton(),
           _NavItem(
-            label: 'habits',
-            iconData: Icons.loop,
+            label: 'Qibla',
+            iconData: SvgIconData.compass,
             showLabel: true,
-            active: currentPath == '/habits',
-            onTap: () => context.go('/habits'),
+            active: false,
+            onTap: () => context.go('/home'),
+          ),
+          _NavItem(
+            label: 'Settings',
+            iconData: SvgIconData.settings,
+            showLabel: true,
+            active: false,
+            onTap: () => context.go('/home'),
           ),
         ],
       ),
@@ -38,7 +48,7 @@ class NavigationBar extends StatelessWidget {
 
 class _NavItem extends StatelessWidget {
   final String label;
-  final IconData iconData;
+  final SvgIconData iconData;
   final bool showLabel;
   final bool active;
   final VoidCallback onTap;
@@ -62,7 +72,7 @@ class _NavItem extends StatelessWidget {
                   width: 60,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: Colors.blue[50],
+                    color: app.Colors.primary50,
                     borderRadius: BorderRadius.circular(16),
                   ),
                 )
@@ -73,46 +83,15 @@ class _NavItem extends StatelessWidget {
               SizedBox(
                 width: 60,
                 height: 32,
-                child: Icon(iconData, size: 30, color: Colors.black),
+                child: SvgIcon(
+                  iconData,
+                  width: 30,
+                  height: 30,
+                  color: Colors.black,
+                ),
               ),
-              Text(
-                label,
-                style: TextStyle(color: active ? Colors.blue : Colors.black),
-              ),
+              Text(label, style: Fonts.navigationBarItem(active)),
             ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _AddButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {},
-      child: Stack(
-        children: [
-          Container(
-            width: 80,
-            height: 48,
-            decoration: BoxDecoration(
-              color: Colors.blue[50],
-              border: Border.all(
-                width: 2,
-                color: Colors.blue[50]!,
-                strokeAlign: BorderSide.strokeAlignInside,
-              ),
-              borderRadius: BorderRadius.circular(24),
-            ),
-          ),
-          SizedBox(
-            width: 80,
-            height: 48,
-            child: Center(
-              child: Icon(Icons.add, size: 28, color: Colors.black),
-            ),
           ),
         ],
       ),

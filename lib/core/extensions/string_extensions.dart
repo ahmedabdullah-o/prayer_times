@@ -31,4 +31,19 @@ extension StringExtensions on String {
 
     return TimeOfDay(hour: hours, minute: minutes);
   }
+
+  String camelCaseToTitleCase() {
+    if (isEmpty) return this;
+
+    final spaced = replaceAllMapped(
+      RegExp(r'([a-z0-9])([A-Z])'),
+      (m) => '${m[1]} ${m[2]}',
+    );
+
+    return spaced
+        .split(RegExp(r'\s+'))
+        .map((word) =>
+            word[0].toUpperCase() + word.substring(1).toLowerCase())
+        .join(' ');
+  }
 }
