@@ -28,13 +28,13 @@ abstract class IHiveStorage {
 
   Future<void> setSavedCoordinates(Coordinates coordinates);
 
-  Coordinates get savedCoordinates;
+  Future<Coordinates> get savedCoordinates;
 
   Future<void> setLocation(TimezoneInfo location);
 
-  TimezoneInfo get location;
+  Future<TimezoneInfo> get location;
 
   Future<void> setLocale(Locale locale);
 
-  Locale get locale;
+  Future<Locale> get locale;
 }

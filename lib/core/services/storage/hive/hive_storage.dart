@@ -136,7 +136,7 @@ class HiveStorage implements IHiveStorage {
   }
 
   @override
-  Coordinates get savedCoordinates {
+  Future<Coordinates> get savedCoordinates {
     double latitude =
         _generalSettingsBox.get(
               "latitude",
@@ -150,7 +150,7 @@ class HiveStorage implements IHiveStorage {
               defaultValue: double.parse(_generalDefault['longitude']!),
             )
             as double;
-    return Coordinates(latitude, longitude);
+    return Future.value(Coordinates(latitude, longitude));
   }
 
   @override
@@ -159,14 +159,16 @@ class HiveStorage implements IHiveStorage {
   }
 
   @override
-  TimezoneInfo get location {
-    return TimezoneInfo(
-      identifier:
-          _generalSettingsBox.get(
-                "location",
-                defaultValue: _generalDefault["location"]!,
-              )
-              as String,
+  Future<TimezoneInfo> get location {
+    return Future.value(
+      TimezoneInfo(
+        identifier:
+            _generalSettingsBox.get(
+                  "location",
+                  defaultValue: _generalDefault["location"]!,
+                )
+                as String,
+      ),
     );
   }
 
@@ -179,9 +181,9 @@ class HiveStorage implements IHiveStorage {
   }
 
   @override
-  Locale get locale {
+  Future<Locale> get locale {
     final query =
         _generalSettingsBox.get("locale", defaultValue: "en-US") as String;
-    return Locale(query.substring(0, 2), query.substring(3));
+    return Future.value(Locale(query.substring(0, 2), query.substring(3)));
   }
 }
