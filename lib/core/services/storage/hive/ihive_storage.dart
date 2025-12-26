@@ -6,6 +6,14 @@ import 'package:prayer_times/core/enums/athan_sound_enums.dart';
 import 'package:prayer_times/core/enums/prayers_enums.dart';
 
 abstract class IHiveStorage {
+  Future<bool> get isInitialized;
+
+  Future<void> init();
+
+  Future<void> dispose();
+
+  Future<void> clear();
+
   Future<void> setSavedCalculationMethod(CalculationMethod method);
 
   Future<CalculationMethod> get savedCalculationMethod;

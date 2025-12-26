@@ -2,13 +2,15 @@ import 'dart:ui';
 
 import 'package:adhan_dart/adhan_dart.dart';
 import 'package:flutter_timezone/timezone_info.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:prayer_times/core/enums/athan_sound_enums.dart';
 import 'package:prayer_times/core/enums/prayers_enums.dart';
 import 'package:prayer_times/core/extensions/enum_extentions.dart';
 import 'package:prayer_times/core/services/storage/hive/ihive_storage.dart';
 
 class HiveStorage implements IHiveStorage {
+  bool _isInitialized = false;
+
   late final Box _notificationMuteSettingsBox;
   late final Box _notificationSoundSettingsBox;
   late final Box _generalSettingsBox;
@@ -48,10 +50,33 @@ class HiveStorage implements IHiveStorage {
     "calculation_method": CalculationMethod.egyptian.name,
   };
 
+  @override
+  Future<bool> get isInitialized => Future.value(_isInitialized);
+
+  @override
   Future<void> init() async {
-    _notificationMuteSettingsBox = await Hive.openBox("soundMuteSettings");
-    _notificationSoundSettingsBox = await Hive.openBox("athanSoundSettings");
-    _generalSettingsBox = await Hive.openBox('general');
+    if (!await isInitialized) {
+      await Hive.initFlutter();
+      _notificationMuteSettingsBox = await Hive.openBox("soundMuteSettings");
+      _notificationSoundSettingsBox = await Hive.openBox("athanSoundSettings");
+      _generalSettingsBox = await Hive.openBox('general');
+      _isInitialized = true;
+    }
+    return;
+  }
+
+  @override
+  Future<void> dispose() async {
+    if (await isInitialized) {
+      await Hive.close();
+      _isInitialized = false;
+      return;
+    }
+  }
+
+  @override
+  Future<void> clear() async {
+    return await Hive.deleteFromDisk();
   }
 
   @override
