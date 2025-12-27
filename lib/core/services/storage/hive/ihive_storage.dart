@@ -8,7 +8,7 @@ import 'package:prayer_times/core/enums/prayers_enums.dart';
 abstract class IHiveStorage {
   Future<bool> get isInitialized;
 
-  Future<void> init();
+  Future<void> init({bool temp = false});
 
   Future<void> dispose();
 

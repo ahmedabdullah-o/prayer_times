@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:adhan_dart/adhan_dart.dart';
@@ -6,7 +7,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:logging/logging.dart';
 import 'package:prayer_times/core/enums/athan_sound_enums.dart';
 import 'package:prayer_times/core/enums/prayers_enums.dart';
-import 'package:prayer_times/core/extensions/enum_extentions.dart';
+import 'package:prayer_times/core/extensions/enum_list_extensions.dart';
 import 'package:prayer_times/core/services/storage/hive/ihive_storage.dart';
 
 class HiveStorage implements IHiveStorage {
@@ -65,15 +66,17 @@ class HiveStorage implements IHiveStorage {
   }
 
   @override
-  Future<void> init() async {
-    _logger.info("init(): initializing storage");
+  Future<void> init({bool temp = false}) async {
+    _logger.info("init(): initializing storage (temp = $temp)");
     if (await isInitialized) {
       _logger.info('init(): cancelled reinitialization');
       return;
     } else {
       try {
         _logger.fine("init(): intializing Hive");
-        await Hive.initFlutter();
+        temp
+            ? Hive.init((await Directory.systemTemp.createTemp()).path)
+            : await Hive.initFlutter();
         _logger.fine("init(): opening boxes...");
         _logger.finer("init(): opening box (soundMuteSettings)");
         _notificationMuteSettingsBox = await Hive.openBox("soundMuteSettings");
@@ -155,7 +158,7 @@ class HiveStorage implements IHiveStorage {
       _logger.info(
         "savedCalculationMethod: parse success with value of (${output.toString()})",
       );
-      return output;
+      return Future.value(output);
     } catch (e, s) {
       _logger.shout("savedCalculationMethod: storage read fail", e, s);
       throw Exception();
@@ -223,11 +226,11 @@ class HiveStorage implements IHiveStorage {
         "getNotificationSound(): query success with value (${query.toString()})",
       );
       _logger.info("getNotificationSound(): parsing output from query...");
-      final output = PrayersEnums.values.mapEnums[query];
+      final output = AthanSoundEnums.values.mapEnums[query];
       _logger.info(
         "getNotificationSound(): parse success with value (${output.toString()})",
       );
-      return output;
+      return Future.value(output);
     } catch (e, s) {
       _logger.shout("getNotificationSound(): storage read fail", e, s);
       throw Exception();

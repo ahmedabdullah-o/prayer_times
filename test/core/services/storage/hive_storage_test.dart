@@ -30,8 +30,8 @@ void main() {
   });
 
   setUp(() async {
-    storage = await providerContainer.read(hiveStorageProvider.future);
-    await storage!.init();
+    storage = await providerContainer.read(hiveStorageProvider);
+    await storage!.init(temp: true);
   });
 
   tearDown(() async {

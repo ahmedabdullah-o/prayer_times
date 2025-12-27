@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:prayer_times/app/shell/app_shell.dart';
 import 'package:prayer_times/core/services/notifications/notifications_provider.dart';
 import 'package:prayer_times/core/services/prayer_times/prayer_times_provider.dart';
+import 'package:prayer_times/core/services/storage/hive/hive_storage_provider.dart';
 import 'package:prayer_times/core/style/colors.dart' as app;
 import 'package:prayer_times/features/home/presentation/screens/home_screen.dart';
 import 'package:workmanager/workmanager.dart';
@@ -16,7 +17,9 @@ void callbackDispatcher() {
     switch (task) {
       case "schedule_prayer_notifications":
         final prayerTimes = providerContainer.read(prayerTimesProvider);
-        prayerTimes.scheduleTodayPrayerNotifications(providerContainer.read(notificationsProvider));
+        prayerTimes.scheduleTodayPrayerNotifications(
+          providerContainer.read(notificationsProvider),
+        );
       default:
         false;
     }
@@ -63,6 +66,8 @@ class MainApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final notifications = ref.read(notificationsProvider);
     notifications.requestPermissions();
+    final storage = ref.read(hiveStorageProvider);
+    storage.init();
     return Container(
       width: double.infinity,
       height: double.infinity,
