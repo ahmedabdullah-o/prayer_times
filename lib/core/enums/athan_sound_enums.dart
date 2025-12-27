@@ -1,1 +1,1 @@
-enum AthanSoundEnums { abdulbasit }
+enum AthanSoundEnums { defaultSound, abdulbasit }

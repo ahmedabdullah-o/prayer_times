@@ -16,7 +16,12 @@ class AppShell extends ConsumerWidget {
     return Stack(
       children: [
         // App Bar
-        Positioned(left: 0, right: 0, top: 0, child: TopBar(prayerTimes.nextPrayer)),
+        Positioned(
+          left: 0,
+          right: 0,
+          top: 0,
+          child: TopBar(prayerTimes.nextPrayer),
+        ),
         // Page content
         Positioned.fill(
           top: 48 + MediaQuery.of(context).padding.top,
