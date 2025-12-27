@@ -18,7 +18,6 @@ class SvgIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('{{{{{{{{{{{{{{{{{{{{{{{{{{{{[loading picture with path: ${svgIconData.path}');
     return SvgPicture.asset(
       svgIconData.path,
       width: width,

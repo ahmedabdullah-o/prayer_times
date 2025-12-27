@@ -81,7 +81,7 @@ class PrayerTimes implements IPrayerTimes {
   }
 
   @override
-  PrayersEnums? get nextPrayer {
+  PrayersEnums get nextPrayer {
     final now = DateTime.now();
     final prayerTimesNow = adhan.PrayerTimes(
       coordinates: coords[selectedCoordsIndex],
@@ -100,7 +100,7 @@ class PrayerTimes implements IPrayerTimes {
     for (final prayer in prayersTimes) {
       if (prayer.isAfter(now)) return prayers[prayer]!;
     }
-    return null;
+    return PrayersEnums.fajr;
   }
 
   @override

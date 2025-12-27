@@ -3,8 +3,10 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_times/core/enums/prayers_enums.dart';
+import 'package:prayer_times/core/extensions/string_extensions.dart';
 import 'package:prayer_times/core/services/prayer_times/prayer_times_provider.dart';
 import 'package:prayer_times/core/style/colors.dart' as app;
+import 'package:prayer_times/features/home/presentation/widgets/calendar.dart';
 import 'package:prayer_times/features/home/presentation/widgets/prayer_card.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -21,7 +23,7 @@ class HomeScreen extends ConsumerWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Placeholder(fallbackHeight: 20),
+        SizedBox(height: 20),
         Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -30,22 +32,26 @@ class HomeScreen extends ConsumerWidget {
               transform: GradientRotation(pi * 1.5),
             ),
           ),
+          foregroundDecoration: BoxDecoration(),
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.max,
-              children: List.generate(
-                prayerNames.length,
-                (i) => PrayerCard(
-                  prayerNames[i].name,
-                  todayPrayerTimes[prayerNames[i]]!,
-                  upcoming == prayerNames[i],
-                  // TODO: use storage when ready to retrieve sound on/off state.
-                  true, // storage not implemented yet to retrieve this preference. set to `true` temporarily.
+              children: [
+                Calendar(),
+                ...List.generate(
+                  prayerNames.length,
+                  (i) => PrayerCard(
+                    prayerNames[i].name.camelCaseToTitleCase(),
+                    todayPrayerTimes[prayerNames[i]]!,
+                    upcoming == prayerNames[i],
+                    // TODO: use storage when ready to retrieve sound on/off state.
+                    true, // storage not implemented yet to retrieve this preference. set to `true` temporarily.
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ),

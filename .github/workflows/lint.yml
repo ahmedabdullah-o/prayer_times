@@ -1,0 +1,59 @@
+name: Lint and Analyze
+
+on: [pull_request]
+
+permissions:
+  contents: read
+
+
+jobs:
+  super-linter:
+    name: Super Linter (General Files)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Super-Linter
+        uses: github/super-linter@v6
+        env:
+          VALIDATE_ALL_CODEBASE: false
+          VALIDATE_DART: false
+          VALIDATE_CPP: false
+          VALIDATE_CLANG_FORMAT: false
+          VALIDATE_KOTLIN: false
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LINTER_RULES_PATH: .github/linters
+
+  flutter-lint:
+    name: Flutter Analyze & Format Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.38.1"
+
+      - name: Cache Flutter Pub packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+          key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run Flutter analyze
+        run: flutter analyze
+
+      - name: Check code formatting
+        run: dart format --set-exit-if-changed .
