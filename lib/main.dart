@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:logging/logging.dart';
 import 'package:prayer_times/app/shell/app_shell.dart';
 import 'package:prayer_times/core/services/notifications/notifications_provider.dart';
 import 'package:prayer_times/core/services/prayer_times/prayer_times_provider.dart';
@@ -41,6 +43,17 @@ final _router = GoRouter(
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  Logger.root.level = Level.ALL;
+  Logger.root.onRecord.listen((record) {
+    if (kDebugMode) {
+      debugPrint(
+        '${record.level.name}: ${record.loggerName}: ${record.message}',
+      );
+      if (record.error != null) {
+        debugPrint('${record.error}\n${record.stackTrace}');
+      }
+    }
+  });
   Workmanager().initialize(callbackDispatcher);
   Workmanager().registerPeriodicTask(
     "schedule_prayer_notifications",
