@@ -67,10 +67,13 @@ void main() {
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: const SystemUiOverlayStyle(
           statusBarColor: app.Colors.background,
+          statusBarBrightness: Brightness.dark,
+          statusBarIconBrightness: Brightness.dark,
           systemNavigationBarColor: app.Colors.foreground,
           systemNavigationBarDividerColor: app.Colors.foreground,
           systemNavigationBarContrastEnforced: true,
           systemStatusBarContrastEnforced: true,
+          systemNavigationBarIconBrightness: Brightness.dark,
         ),
         child: const MainApp(),
       ),
