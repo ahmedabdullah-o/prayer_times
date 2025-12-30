@@ -62,14 +62,19 @@ void main() {
     existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
   );
 
-  SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle(
-      systemNavigationBarColor: app.Colors.foreground,
-      systemNavigationBarDividerColor: app.Colors.foreground,
-      statusBarColor: app.Colors.background,
+  runApp(
+    ProviderScope(
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: const SystemUiOverlayStyle(
+          statusBarColor: app.Colors.background,
+          systemNavigationBarColor: app.Colors.foreground,
+          systemNavigationBarIconBrightness: Brightness.light,
+          systemNavigationBarContrastEnforced: false,
+        ),
+        child: const MainApp(),
+      ),
     ),
   );
-  runApp(ProviderScope(child: const MainApp()));
 }
 
 class MainApp extends ConsumerWidget {
