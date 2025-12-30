@@ -68,8 +68,9 @@ void main() {
         value: const SystemUiOverlayStyle(
           statusBarColor: app.Colors.background,
           systemNavigationBarColor: app.Colors.foreground,
-          systemNavigationBarIconBrightness: Brightness.light,
-          systemNavigationBarContrastEnforced: false,
+          systemNavigationBarDividerColor: app.Colors.foreground,
+          systemNavigationBarContrastEnforced: true,
+          systemStatusBarContrastEnforced: true,
         ),
         child: const MainApp(),
       ),
@@ -84,18 +85,36 @@ class MainApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final notifications = ref.read(notificationsProvider);
     notifications.requestPermissions();
-    final storage = ref.read(hiveStorageProvider);
-    storage.init();
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      color: app.Colors.background,
-      child: SafeArea(
-        child: MaterialApp.router(
-          routerConfig: _router,
-          debugShowCheckedModeBanner: false,
-        ),
-      ),
+    final storage = ref.watch(hiveStorageProvider);
+    return storage.when(
+      data: (storage) {
+        return FutureBuilder(
+          future: storage.init(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return Container(
+                width: double.infinity,
+                height: double.infinity,
+                color: app.Colors.background,
+                child: const SizedBox(),
+              );
+            }
+            return Container(
+              width: double.infinity,
+              height: double.infinity,
+              color: app.Colors.background,
+              child: SafeArea(
+                child: MaterialApp.router(
+                  routerConfig: _router,
+                  debugShowCheckedModeBanner: false,
+                ),
+              ),
+            );
+          },
+        );
+      },
+      loading: () => const SizedBox(),
+      error: (error, stack) => const SizedBox(),
     );
   }
 }

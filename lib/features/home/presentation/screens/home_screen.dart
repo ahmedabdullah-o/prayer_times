@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_times/core/enums/prayers_enums.dart';
 import 'package:prayer_times/core/extensions/string_extensions.dart';
 import 'package:prayer_times/core/services/prayer_times/prayer_times_provider.dart';
+import 'package:prayer_times/core/services/storage/hive/hive_storage_provider.dart';
 import 'package:prayer_times/core/style/colors.dart' as app;
 import 'package:prayer_times/features/home/presentation/widgets/calendar.dart';
 import 'package:prayer_times/features/home/presentation/widgets/prayer_card.dart';
@@ -20,50 +21,64 @@ class HomeScreen extends ConsumerWidget {
     final todayPrayerTimes = prayerTimes.todayPrayerTimes;
     final upcoming = prayerTimes.nextPrayer;
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        SizedBox(height: 20),
-        Container(
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [app.Colors.foreground, app.Colors.background],
-              // stops: [.3, .85],
-              transform: GradientRotation(pi * 1.5),
+    final storage = ref.watch(hiveStorageProvider);
+
+    return storage.when(
+      loading: () => CircularProgressIndicator(),
+      error: (e, s) => throw Exception(e.toString()),
+      data: (storage) => Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          SizedBox(height: 20),
+          Container(
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [app.Colors.foreground, app.Colors.background],
+                // stops: [.3, .85],
+                transform: GradientRotation(pi * 1.5),
+              ),
+            ),
+            foregroundDecoration: BoxDecoration(),
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: RepaintBoundary(child: _PatternBackground()),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Calendar(),
+                      ...List.generate(
+                        prayerNames.length,
+                        (i) => FutureBuilder<bool>(
+                          future: storage.getNotificationMute(prayerNames[i]),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState !=
+                                ConnectionState.done) {
+                              return SizedBox();
+                            }
+                            return PrayerCard(
+                              prayerNames[i].name.camelCaseToTitleCase(),
+                              todayPrayerTimes[prayerNames[i]]!,
+                              upcoming == prayerNames[i],
+                              snapshot.data ?? false,
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-          foregroundDecoration: BoxDecoration(),
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: RepaintBoundary(child: _PatternBackground()),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Calendar(),
-                    ...List.generate(
-                      prayerNames.length,
-                      (i) => PrayerCard(
-                        prayerNames[i].name.camelCaseToTitleCase(),
-                        todayPrayerTimes[prayerNames[i]]!,
-                        upcoming == prayerNames[i],
-                        // TODO: use storage when ready to retrieve sound on/off state.
-                        true, // storage not implemented yet to retrieve this preference. set to `true` temporarily.
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

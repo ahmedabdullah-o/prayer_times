@@ -9,12 +9,12 @@ class PrayerCard extends StatelessWidget {
   final String name;
   final DateTime dateTime;
   final bool upcoming;
-  final bool soundOn;
+  final bool mute;
   const PrayerCard(
     this.name,
     this.dateTime,
     this.upcoming,
-    this.soundOn, {
+    this.mute, {
     super.key,
   });
 
@@ -59,33 +59,33 @@ class PrayerCard extends StatelessWidget {
             ),
           ),
         ),
-        _SoundIcon(soundOn),
+        _SoundIcon(mute),
       ],
     );
   }
 }
 
 class _SoundIcon extends StatefulWidget {
-  final bool soundOn;
-  const _SoundIcon(this.soundOn);
+  final bool mute;
+  const _SoundIcon(this.mute);
 
   @override
-  State<_SoundIcon> createState() => __SoundIconState();
+  State<_SoundIcon> createState() => _SoundIconState();
 }
 
-class __SoundIconState extends State<_SoundIcon> {
-  late bool _soundOn;
+class _SoundIconState extends State<_SoundIcon> {
+  late bool _mute;
 
   void _onTap() {
     setState(() {
-      _soundOn ^= true;
+      _mute ^= true;
     });
   }
 
   @override
   void initState() {
     super.initState();
-    _soundOn = widget.soundOn;
+    _mute = widget.mute;
   }
 
   @override
@@ -95,10 +95,10 @@ class __SoundIconState extends State<_SoundIcon> {
       child: SizedBox.square(
         dimension: 36,
         child: SvgIcon(
-          _soundOn ? SvgIconData.soundOn : SvgIconData.soundOff,
+          _mute ? SvgIconData.soundOff : SvgIconData.soundOn,
           width: 36,
           height: 36,
-          color: _soundOn ? app.Colors.text : app.Colors.textSecondary,
+          color: _mute ? app.Colors.textSecondary : app.Colors.text,
         ),
       ),
     );
