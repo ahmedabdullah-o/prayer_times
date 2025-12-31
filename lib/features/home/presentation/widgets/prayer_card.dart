@@ -9,6 +9,7 @@ import 'package:prayer_times/core/services/storage/hive/ihive_storage.dart';
 import 'package:prayer_times/core/style/colors.dart' as app;
 import 'package:prayer_times/core/style/fonts.dart';
 import 'package:prayer_times/core/style/icons.dart';
+import 'package:workmanager/workmanager.dart';
 
 class PrayerCard extends StatelessWidget {
   final PrayersEnums prayer;
@@ -91,6 +92,13 @@ class _SoundIconState extends ConsumerState<_SoundIcon> {
     await storage.setNotificationMute(_prayer, oldValue ^ true);
     final newValue = await storage.getNotificationMute(_prayer);
     setState(() {
+      Workmanager().cancelByTag("schedule_prayer_notifications");
+      Workmanager().registerPeriodicTask(
+        "schedule_prayer_notifications",
+        "schedule_prayer_notifications",
+        frequency: Duration(hours: 24),
+        existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
+      );
       _mute = newValue;
     });
   }
