@@ -22,10 +22,21 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
+  late int _offset;
+
+  void _onTap(int value) {
+    setState(() => _offset += value);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _offset = widget.offset;
+  }
+
   @override
   Widget build(BuildContext context) {
-    int offset = widget.offset;
-    final now = DateTime.now().add(Duration(days: widget.offset));
+    final now = DateTime.now().add(Duration(days: _offset));
     final hijriDate = HijriCalendar.fromDate(now);
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -34,12 +45,16 @@ class _CalendarState extends State<Calendar> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           GestureDetector(
-            onTap: () => setState(() => offset--),
-            child: SvgIcon(
-              SvgIconData.arrowLeft,
+            onTap: () => _onTap(-1),
+            child: SizedBox(
               width: 24,
               height: 24,
-              color: app.Colors.primary,
+              child: SvgIcon(
+                SvgIconData.arrowLeft,
+                width: 24,
+                height: 24,
+                color: app.Colors.primary,
+              ),
             ),
           ),
           Expanded(
@@ -64,12 +79,16 @@ class _CalendarState extends State<Calendar> {
             ),
           ),
           GestureDetector(
-            onTap: () => setState(() => offset++),
-            child: SvgIcon(
-              SvgIconData.arrowRight,
+            onTap: () => _onTap(1),
+            child: SizedBox(
               width: 24,
               height: 24,
-              color: app.Colors.primary,
+              child: SvgIcon(
+                SvgIconData.arrowRight,
+                width: 24,
+                height: 24,
+                color: app.Colors.primary,
+              ),
             ),
           ),
         ],

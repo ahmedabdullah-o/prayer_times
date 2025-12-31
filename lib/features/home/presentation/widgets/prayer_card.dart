@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:prayer_times/core/enums/prayers_enums.dart';
 import 'package:prayer_times/core/enums/svg_icon_data_enums.dart';
+import 'package:prayer_times/core/extensions/string_extensions.dart';
+import 'package:prayer_times/core/services/storage/hive/hive_storage_provider.dart';
+import 'package:prayer_times/core/services/storage/hive/ihive_storage.dart';
 import 'package:prayer_times/core/style/colors.dart' as app;
 import 'package:prayer_times/core/style/fonts.dart';
 import 'package:prayer_times/core/style/icons.dart';
 
 class PrayerCard extends StatelessWidget {
-  final String name;
+  final PrayersEnums prayer;
   final DateTime dateTime;
   final bool upcoming;
   final bool mute;
   const PrayerCard(
-    this.name,
+    this.prayer,
     this.dateTime,
     this.upcoming,
     this.mute, {
@@ -50,7 +55,10 @@ class PrayerCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
               children: [
-                Text(name, style: Fonts.prayerCardText(upcoming)),
+                Text(
+                  prayer.name.camelCaseToTitleCase(),
+                  style: Fonts.prayerCardText(upcoming),
+                ),
                 Text(
                   DateFormat(DateFormat.HOUR24_MINUTE).format(dateTime),
                   style: Fonts.prayerCardText(upcoming),
@@ -59,26 +67,31 @@ class PrayerCard extends StatelessWidget {
             ),
           ),
         ),
-        _SoundIcon(mute),
+        _SoundIcon(prayer, mute),
       ],
     );
   }
 }
 
-class _SoundIcon extends StatefulWidget {
+class _SoundIcon extends ConsumerStatefulWidget {
+  final PrayersEnums prayer;
   final bool mute;
-  const _SoundIcon(this.mute);
+  const _SoundIcon(this.prayer, this.mute);
 
   @override
-  State<_SoundIcon> createState() => _SoundIconState();
+  ConsumerState<_SoundIcon> createState() => _SoundIconState();
 }
 
-class _SoundIconState extends State<_SoundIcon> {
+class _SoundIconState extends ConsumerState<_SoundIcon> {
+  late PrayersEnums _prayer;
   late bool _mute;
 
-  void _onTap() {
+  Future<void> _onTap(IHiveStorage storage) async {
+    final oldValue = await storage.getNotificationMute(_prayer);
+    await storage.setNotificationMute(_prayer, oldValue ^ true);
+    final newValue = await storage.getNotificationMute(_prayer);
     setState(() {
-      _mute ^= true;
+      _mute = newValue;
     });
   }
 
@@ -86,19 +99,25 @@ class _SoundIconState extends State<_SoundIcon> {
   void initState() {
     super.initState();
     _mute = widget.mute;
+    _prayer = widget.prayer;
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _onTap,
-      child: SizedBox.square(
-        dimension: 36,
-        child: SvgIcon(
-          _mute ? SvgIconData.soundOff : SvgIconData.soundOn,
-          width: 36,
-          height: 36,
-          color: _mute ? app.Colors.textSecondary : app.Colors.text,
+    final storage = ref.watch(hiveStorageProvider);
+    return storage.when(
+      loading: () => CircularProgressIndicator(),
+      error: (e, s) => throw Exception(e.toString()),
+      data: (storage) => GestureDetector(
+        onTap: () async => await _onTap(storage),
+        child: SizedBox.square(
+          dimension: 36,
+          child: SvgIcon(
+            _mute ? SvgIconData.soundOff : SvgIconData.soundOn,
+            width: 36,
+            height: 36,
+            color: _mute ? app.Colors.textSecondary : app.Colors.text,
+          ),
         ),
       ),
     );

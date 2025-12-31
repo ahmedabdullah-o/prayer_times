@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_times/core/enums/prayers_enums.dart';
-import 'package:prayer_times/core/extensions/string_extensions.dart';
 import 'package:prayer_times/core/services/prayer_times/prayer_times_provider.dart';
 import 'package:prayer_times/core/services/storage/hive/hive_storage_provider.dart';
 import 'package:prayer_times/core/style/colors.dart' as app;
@@ -63,7 +62,7 @@ class HomeScreen extends ConsumerWidget {
                               return SizedBox();
                             }
                             return PrayerCard(
-                              prayerNames[i].name.camelCaseToTitleCase(),
+                              prayerNames[i],
                               todayPrayerTimes[prayerNames[i]]!,
                               upcoming == prayerNames[i],
                               snapshot.data ?? false,
