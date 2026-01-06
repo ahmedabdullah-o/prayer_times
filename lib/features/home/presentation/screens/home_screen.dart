@@ -14,11 +14,12 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final prayerTimes = ref.read(prayerTimesProvider);
-    final prayerNames = PrayersEnums.values;
+    final prayerTimesRef = ref.read(prayerTimesProvider);
+    final prayerEnums = PrayersEnums.values;
 
-    final todayPrayerTimes = prayerTimes.todayPrayerTimes;
-    final upcoming = prayerTimes.nextPrayer;
+    final calendarOffset = ref.watch(calendarOffsetProvider);
+    final todayPrayerTimes = prayerTimesRef.prayerTimes(calendarOffset);
+    final nextPrayer = ref.watch(nextPrayerProvider);
 
     final storage = ref.watch(hiveStorageProvider);
 
@@ -53,18 +54,18 @@ class HomeScreen extends ConsumerWidget {
                     children: [
                       Calendar(),
                       ...List.generate(
-                        prayerNames.length,
+                        prayerEnums.length,
                         (i) => FutureBuilder<bool>(
-                          future: storage.getNotificationMute(prayerNames[i]),
+                          future: storage.getNotificationMute(prayerEnums[i]),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState !=
                                 ConnectionState.done) {
-                              return SizedBox();
+                              return SizedBox(height:  72,);
                             }
                             return PrayerCard(
-                              prayerNames[i],
-                              todayPrayerTimes[prayerNames[i]]!,
-                              upcoming == prayerNames[i],
+                              prayerEnums[i],
+                              todayPrayerTimes[prayerEnums[i]]!,
+                              nextPrayer == prayerEnums[i] && calendarOffset == 0,
                               snapshot.data ?? false,
                             );
                           },
@@ -228,4 +229,29 @@ class _PatternBackground extends StatelessWidget {
       ),
     );
   }
+}
+
+final calendarOffsetProvider = NotifierProvider<CalendarOffset, int>(
+  CalendarOffset.new,
+);
+
+class CalendarOffset extends Notifier<int> {
+  @override
+  int build() => 0;
+
+  void increment() => state++;
+
+  void decrement() => state--;
+}
+
+final nextPrayerProvider = NotifierProvider<NextPrayer, PrayersEnums>(
+  NextPrayer.new,
+);
+
+class NextPrayer extends Notifier<PrayersEnums> {
+  final prayerTimes = ProviderContainer().read(prayerTimesProvider);
+  @override
+  PrayersEnums build() => prayerTimes.nextPrayer;
+
+  void update() => state = prayerTimes.nextPrayer;
 }

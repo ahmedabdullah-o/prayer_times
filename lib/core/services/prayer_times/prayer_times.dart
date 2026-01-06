@@ -8,6 +8,7 @@ import 'package:prayer_times/core/enums/prayers_enums.dart';
 import 'package:prayer_times/core/services/notifications/inotifications.dart';
 import 'package:prayer_times/core/services/notifications/notification_model.dart';
 import 'package:prayer_times/core/services/prayer_times/iprayer_times.dart';
+import 'package:prayer_times/core/services/storage/hive/ihive_storage.dart';
 import 'package:timezone/data/latest.dart' as tz_data;
 
 //LocalImports
@@ -22,10 +23,11 @@ class PrayerTimes implements IPrayerTimes {
 
   //TODO: make params and notification sound customizable
   final params = adhan.CalculationMethodParameters.egyptian();
+
   @override
-  Map<PrayersEnums, DateTime> get todayPrayerTimes {
+  Map<PrayersEnums, DateTime> prayerTimes(int offset) {
     Map<PrayersEnums, DateTime> out = {};
-    final now = DateTime.now();
+    final now = DateTime.now().add(Duration(days: offset));
     final prayerTimesNow = adhan.PrayerTimes(
           coordinates: coords[selectedCoordsIndex],
           calculationParameters: params,
@@ -106,23 +108,26 @@ class PrayerTimes implements IPrayerTimes {
   @override
   Future<void> scheduleTodayPrayerNotifications(
     Inotifications notifications,
+    IHiveStorage storage,
   ) async {
     notifications.init();
     notifications.cancelAll();
 
-    final prayerTimes = todayPrayerTimes;
+    final todayPrayerTimes = prayerTimes(0);
 
     for (final prayer in PrayersEnums.values) {
-      notifications.schedule(
-        NotificationModel(
-          prayerTimes[prayer].hashCode,
-          prayer.name,
-          "It's time to pray ${prayer.name}: ${DateFormat(DateFormat.HOUR24_MINUTE).format(prayerTimes[prayer]!)}",
-          notificationDetails: NotificationDetailsEnum.prayer,
-        ),
-        prayerTimes[prayer]!,
-        matchDateTimeComponents: DateTimeComponents.dateAndTime,
-      );
+      if (!await storage.getNotificationMute(prayer)) {
+        notifications.schedule(
+          NotificationModel(
+            todayPrayerTimes[prayer].hashCode,
+            prayer.name,
+            "It's time to pray ${prayer.name}: ${DateFormat(DateFormat.HOUR24_MINUTE).format(todayPrayerTimes[prayer]!)}",
+            notificationDetails: NotificationDetailsEnum.prayer,
+          ),
+          todayPrayerTimes[prayer]!,
+          matchDateTimeComponents: DateTimeComponents.dateAndTime,
+        );
+      }
     }
   }
 }

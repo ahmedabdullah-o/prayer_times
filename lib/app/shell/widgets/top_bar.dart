@@ -10,14 +10,17 @@ import 'package:prayer_times/core/services/prayer_times/prayer_times_provider.da
 import 'package:prayer_times/core/style/colors.dart' as app;
 import 'package:prayer_times/core/style/fonts.dart';
 import 'package:prayer_times/core/style/icons.dart';
+import 'package:prayer_times/features/home/presentation/screens/home_screen.dart';
 
 class TopBar extends ConsumerWidget {
-  final PrayersEnums nextPrayer;
-  const TopBar(this.nextPrayer, {super.key});
+  const TopBar({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final prayerTimes = ref.read(prayerTimesProvider);
+    final nextPrayer = ref.watch(nextPrayerProvider);
+    final nextPrayerNotifier = ref.read(nextPrayerProvider.notifier);
+
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -34,7 +37,7 @@ class TopBar extends ConsumerWidget {
               _Location(),
             ],
           ),
-          _NextPrayerTimeLeft(prayerTimes),
+          _NextPrayerTimeLeft(prayerTimes, nextPrayer, nextPrayerNotifier),
         ],
       ),
     );
@@ -43,7 +46,13 @@ class TopBar extends ConsumerWidget {
 
 class _NextPrayerTimeLeft extends ConsumerStatefulWidget {
   final IPrayerTimes prayerTimes;
-  const _NextPrayerTimeLeft(this.prayerTimes);
+  final PrayersEnums nextPrayer;
+  final NextPrayer nextPrayerNotifier;
+  const _NextPrayerTimeLeft(
+    this.prayerTimes,
+    this.nextPrayer,
+    this.nextPrayerNotifier,
+  );
 
   @override
   ConsumerState<_NextPrayerTimeLeft> createState() =>
@@ -51,9 +60,15 @@ class _NextPrayerTimeLeft extends ConsumerStatefulWidget {
 }
 
 class _NextPrayerTimeLeftState extends ConsumerState<_NextPrayerTimeLeft> {
-  late PrayersEnums _nextPrayer = widget.prayerTimes.nextPrayer;
-  late Duration _timeLeft = widget.prayerTimes.todayPrayerTimes[_nextPrayer]!
+  late final NextPrayer _nextPrayerNotifier = widget.nextPrayerNotifier;
+  late final PrayersEnums _nextPrayer = widget.nextPrayer;
+  late DateTime _nextPrayerTime = widget.prayerTimes.prayerTimes(
+    0,
+  )[_nextPrayer]!;
+  late Duration _timeLeft = widget.prayerTimes
+      .prayerTimes(0)[_nextPrayer]!
       .difference(DateTime.now());
+  bool prayerPassed = false;
   Timer? _timer;
 
   @override
@@ -61,13 +76,18 @@ class _NextPrayerTimeLeftState extends ConsumerState<_NextPrayerTimeLeft> {
     super.initState();
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
-        _timeLeft = widget.prayerTimes.todayPrayerTimes[_nextPrayer]!
-            .difference(DateTime.now());
+        _timeLeft = _nextPrayerTime.difference(DateTime.now());
+
+        if (prayerPassed) {
+          _nextPrayerNotifier.update();
+          _nextPrayerTime = widget.prayerTimes.prayerTimes(0)[_nextPrayer]!;
+          _timeLeft = _nextPrayerTime.difference(DateTime.now());
+
+          prayerPassed = false;
+        }
 
         if (_timeLeft.isNegative) {
-          _nextPrayer = widget.prayerTimes.nextPrayer;
-          _timeLeft = widget.prayerTimes.todayPrayerTimes[_nextPrayer]!
-              .difference(DateTime.now());
+          prayerPassed = true;
         }
       });
     });

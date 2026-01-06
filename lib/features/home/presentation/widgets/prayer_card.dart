@@ -4,12 +4,15 @@ import 'package:intl/intl.dart';
 import 'package:prayer_times/core/enums/prayers_enums.dart';
 import 'package:prayer_times/core/enums/svg_icon_data_enums.dart';
 import 'package:prayer_times/core/extensions/string_extensions.dart';
+import 'package:prayer_times/core/services/notifications/inotifications.dart';
+import 'package:prayer_times/core/services/notifications/notifications_provider.dart';
+import 'package:prayer_times/core/services/prayer_times/iprayer_times.dart';
+import 'package:prayer_times/core/services/prayer_times/prayer_times_provider.dart';
 import 'package:prayer_times/core/services/storage/hive/hive_storage_provider.dart';
 import 'package:prayer_times/core/services/storage/hive/ihive_storage.dart';
 import 'package:prayer_times/core/style/colors.dart' as app;
 import 'package:prayer_times/core/style/fonts.dart';
 import 'package:prayer_times/core/style/icons.dart';
-import 'package:workmanager/workmanager.dart';
 
 class PrayerCard extends StatelessWidget {
   final PrayersEnums prayer;
@@ -87,18 +90,16 @@ class _SoundIconState extends ConsumerState<_SoundIcon> {
   late PrayersEnums _prayer;
   late bool _mute;
 
-  Future<void> _onTap(IHiveStorage storage) async {
+  Future<void> _onTap(
+    IHiveStorage storage,
+    Inotifications notifications,
+    IPrayerTimes prayerTimes,
+  ) async {
     final oldValue = await storage.getNotificationMute(_prayer);
     await storage.setNotificationMute(_prayer, oldValue ^ true);
     final newValue = await storage.getNotificationMute(_prayer);
+    prayerTimes.scheduleTodayPrayerNotifications(notifications, storage);
     setState(() {
-      Workmanager().cancelByTag("schedule_prayer_notifications");
-      Workmanager().registerPeriodicTask(
-        "schedule_prayer_notifications",
-        "schedule_prayer_notifications",
-        frequency: Duration(hours: 24),
-        existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
-      );
       _mute = newValue;
     });
   }
@@ -113,11 +114,13 @@ class _SoundIconState extends ConsumerState<_SoundIcon> {
   @override
   Widget build(BuildContext context) {
     final storage = ref.watch(hiveStorageProvider);
+    final prayerTimes = ref.read(prayerTimesProvider);
+    final notifications = ref.read(notificationsProvider);
     return storage.when(
       loading: () => CircularProgressIndicator(),
       error: (e, s) => throw Exception(e.toString()),
       data: (storage) => GestureDetector(
-        onTap: () async => await _onTap(storage),
+        onTap: () async => await _onTap(storage, notifications, prayerTimes),
         child: SizedBox.square(
           dimension: 36,
           child: SvgIcon(
