@@ -60,12 +60,13 @@ class HomeScreen extends ConsumerWidget {
                           builder: (context, snapshot) {
                             if (snapshot.connectionState !=
                                 ConnectionState.done) {
-                              return SizedBox(height:  72,);
+                              return SizedBox(height: 48);
                             }
                             return PrayerCard(
                               prayerEnums[i],
                               todayPrayerTimes[prayerEnums[i]]!,
-                              nextPrayer == prayerEnums[i] && calendarOffset == 0,
+                              nextPrayer == prayerEnums[i] &&
+                                  calendarOffset == 0,
                               snapshot.data ?? false,
                             );
                           },
