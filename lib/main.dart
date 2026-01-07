@@ -21,7 +21,7 @@ void callbackDispatcher() {
         final prayerTimes = providerContainer.read(prayerTimesProvider);
         prayerTimes.scheduleTodayPrayerNotifications(
           providerContainer.read(notificationsProvider),
-          await providerContainer.read(hiveStorageProvider.future)
+          await providerContainer.read(hiveStorageProvider.future),
         );
       default:
         false;

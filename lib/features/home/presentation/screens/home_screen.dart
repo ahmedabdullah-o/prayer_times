@@ -40,15 +40,13 @@ class HomeScreen extends ConsumerWidget {
                   (i) => FutureBuilder<bool>(
                     future: storage.getNotificationMute(prayerEnums[i]),
                     builder: (context, snapshot) {
-                      if (snapshot.connectionState !=
-                          ConnectionState.done) {
+                      if (snapshot.connectionState != ConnectionState.done) {
                         return SizedBox(height: 48);
                       }
                       return PrayerCard(
                         prayerEnums[i],
                         todayPrayerTimes[prayerEnums[i]]!,
-                        nextPrayer == prayerEnums[i] &&
-                            calendarOffset == 0,
+                        nextPrayer == prayerEnums[i] && calendarOffset == 0,
                         snapshot.data ?? false,
                       );
                     },
@@ -62,8 +60,6 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 }
-
-
 
 final calendarOffsetProvider = NotifierProvider<CalendarOffset, int>(
   CalendarOffset.new,
