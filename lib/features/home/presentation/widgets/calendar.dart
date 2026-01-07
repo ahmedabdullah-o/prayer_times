@@ -1,31 +1,25 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:intl/intl.dart';
 import 'package:prayer_times/core/enums/svg_icon_data_enums.dart';
 import 'package:prayer_times/core/style/colors.dart' as app;
 import 'package:prayer_times/core/style/fonts.dart';
 import 'package:prayer_times/core/style/icons.dart';
+import 'package:prayer_times/features/home/presentation/screens/home_screen.dart';
 
-class Calendar extends StatefulWidget {
-  /// how many days to offset from today
-  ///
-  /// Example:
-  ///
-  /// * -3 means 3 days before today
-  /// * 0 means today
-  /// * 3 means 3 days after today
-  final int offset;
-  const Calendar({this.offset = 0, super.key});
+class Calendar extends ConsumerStatefulWidget {
+  const Calendar({super.key});
 
   @override
-  State<Calendar> createState() => _CalendarState();
+  ConsumerState<Calendar> createState() => _CalendarState();
 }
 
-class _CalendarState extends State<Calendar> {
+class _CalendarState extends ConsumerState<Calendar> {
   @override
   Widget build(BuildContext context) {
-    int offset = widget.offset;
-    final now = DateTime.now().add(Duration(days: widget.offset));
+    final offset = ref.watch(calendarOffsetProvider);
+    final now = DateTime.now().add(Duration(days: offset));
     final hijriDate = HijriCalendar.fromDate(now);
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -34,12 +28,16 @@ class _CalendarState extends State<Calendar> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           GestureDetector(
-            onTap: () => setState(() => offset--),
-            child: SvgIcon(
-              SvgIconData.arrowLeft,
+            onTap: () => ref.read(calendarOffsetProvider.notifier).decrement(),
+            child: SizedBox(
               width: 24,
               height: 24,
-              color: app.Colors.primary,
+              child: SvgIcon(
+                SvgIconData.arrowLeft,
+                width: 24,
+                height: 24,
+                color: app.Colors.primary,
+              ),
             ),
           ),
           Expanded(
@@ -64,12 +62,16 @@ class _CalendarState extends State<Calendar> {
             ),
           ),
           GestureDetector(
-            onTap: () => setState(() => offset++),
-            child: SvgIcon(
-              SvgIconData.arrowRight,
+            onTap: () => ref.read(calendarOffsetProvider.notifier).increment(),
+            child: SizedBox(
               width: 24,
               height: 24,
-              color: app.Colors.primary,
+              child: SvgIcon(
+                SvgIconData.arrowRight,
+                width: 24,
+                height: 24,
+                color: app.Colors.primary,
+              ),
             ),
           ),
         ],

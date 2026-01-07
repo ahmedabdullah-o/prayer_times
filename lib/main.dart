@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:logging/logging.dart';
 import 'package:prayer_times/app/shell/app_shell.dart';
 import 'package:prayer_times/core/services/notifications/notifications_provider.dart';
 import 'package:prayer_times/core/services/prayer_times/prayer_times_provider.dart';
@@ -19,6 +21,7 @@ void callbackDispatcher() {
         final prayerTimes = providerContainer.read(prayerTimesProvider);
         prayerTimes.scheduleTodayPrayerNotifications(
           providerContainer.read(notificationsProvider),
+          await providerContainer.read(hiveStorageProvider.future),
         );
       default:
         false;
@@ -41,6 +44,17 @@ final _router = GoRouter(
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  Logger.root.level = Level.ALL;
+  Logger.root.onRecord.listen((record) {
+    if (kDebugMode) {
+      debugPrint(
+        '${record.level.name}: ${record.loggerName}: ${record.message}',
+      );
+      if (record.error != null) {
+        debugPrint('${record.error}\n${record.stackTrace}');
+      }
+    }
+  });
   Workmanager().initialize(callbackDispatcher);
   Workmanager().registerPeriodicTask(
     "schedule_prayer_notifications",
@@ -49,14 +63,23 @@ void main() {
     existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
   );
 
-  SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle(
-      systemNavigationBarColor: app.Colors.foreground,
-      systemNavigationBarDividerColor: app.Colors.foreground,
-      statusBarColor: app.Colors.background,
+  runApp(
+    ProviderScope(
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: const SystemUiOverlayStyle(
+          statusBarColor: app.Colors.background,
+          statusBarBrightness: Brightness.dark,
+          statusBarIconBrightness: Brightness.dark,
+          systemNavigationBarColor: app.Colors.foreground,
+          systemNavigationBarDividerColor: app.Colors.foreground,
+          systemNavigationBarContrastEnforced: true,
+          systemStatusBarContrastEnforced: true,
+          systemNavigationBarIconBrightness: Brightness.dark,
+        ),
+        child: const MainApp(),
+      ),
     ),
   );
-  runApp(ProviderScope(child: const MainApp()));
 }
 
 class MainApp extends ConsumerWidget {
@@ -66,18 +89,36 @@ class MainApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final notifications = ref.read(notificationsProvider);
     notifications.requestPermissions();
-    final storage = ref.read(hiveStorageProvider);
-    storage.init();
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      color: app.Colors.background,
-      child: SafeArea(
-        child: MaterialApp.router(
-          routerConfig: _router,
-          debugShowCheckedModeBanner: false,
-        ),
-      ),
+    final storage = ref.watch(hiveStorageProvider);
+    return storage.when(
+      data: (storage) {
+        return FutureBuilder(
+          future: storage.init(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return Container(
+                width: double.infinity,
+                height: double.infinity,
+                color: app.Colors.background,
+                child: const SizedBox(),
+              );
+            }
+            return Container(
+              width: double.infinity,
+              height: double.infinity,
+              color: app.Colors.background,
+              child: SafeArea(
+                child: MaterialApp.router(
+                  routerConfig: _router,
+                  debugShowCheckedModeBanner: false,
+                ),
+              ),
+            );
+          },
+        );
+      },
+      loading: () => const SizedBox(),
+      error: (error, stack) => const SizedBox(),
     );
   }
 }

@@ -9,6 +9,7 @@ class Colors {
 
   // Neutral palette
   static const foreground = Color(0xFFE3ECD6);
+  static const foreground50 = Color(0x88E3ECD6);
   static const background = Color(0xFFF8FBF3);
   static const text = Color(0xFF1A1D17);
   static const textSecondary = Color(0xFF4E5445);
