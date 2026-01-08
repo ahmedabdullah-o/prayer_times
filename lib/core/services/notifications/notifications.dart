@@ -58,7 +58,8 @@ class Notifications implements Inotifications {
   }
 
   @override
-  void init() {
+  Future<void> init() async {
+    //Init timezone database
     tz_data.initializeTimeZones();
     final initializationSettings = InitializationSettings(
       android: AndroidInitializationSettings('@mipmap/ic_launcher'),
@@ -93,10 +94,9 @@ class Notifications implements Inotifications {
       final notificationChannel = value.android.toAndroidNotificationChannel;
       androidImplementation?.createNotificationChannel(notificationChannel);
     }
-    //Init timezone database
 
-    //Request permissions
-    requestPermissions();
+    //Request permissions is done here because it's considered a thing that you need for the service to work properly.
+    await requestPermissions();
   }
 
   @override
