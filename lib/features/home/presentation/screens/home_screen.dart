@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_times/core/enums/prayers_enums.dart';
 import 'package:prayer_times/core/services/prayer_times/prayer_times_provider.dart';
 import 'package:prayer_times/core/services/storage/hive/hive_storage_provider.dart';
+import 'package:prayer_times/features/home/domain/notifiers/next_prayer_notifier.dart';
+import 'package:prayer_times/features/home/domain/notifiers/calendar_offset_notifier.dart';
 import 'package:prayer_times/features/home/presentation/widgets/calendar.dart';
 import 'package:prayer_times/features/home/presentation/widgets/prayer_card.dart';
 
@@ -61,27 +63,4 @@ class HomeScreen extends ConsumerWidget {
   }
 }
 
-final calendarOffsetProvider = NotifierProvider<CalendarOffset, int>(
-  CalendarOffset.new,
-);
 
-class CalendarOffset extends Notifier<int> {
-  @override
-  int build() => 0;
-
-  void increment() => state++;
-
-  void decrement() => state--;
-}
-
-final nextPrayerProvider = NotifierProvider<NextPrayer, PrayersEnums>(
-  NextPrayer.new,
-);
-
-class NextPrayer extends Notifier<PrayersEnums> {
-  final prayerTimes = ProviderContainer().read(prayerTimesProvider);
-  @override
-  PrayersEnums build() => prayerTimes.nextPrayer;
-
-  void update() => state = prayerTimes.nextPrayer;
-}

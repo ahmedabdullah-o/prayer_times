@@ -6,7 +6,7 @@ import 'package:prayer_times/core/enums/svg_icon_data_enums.dart';
 import 'package:prayer_times/core/style/colors.dart' as app;
 import 'package:prayer_times/core/style/fonts.dart';
 import 'package:prayer_times/core/style/icons.dart';
-import 'package:prayer_times/features/home/presentation/screens/home_screen.dart';
+import 'package:prayer_times/features/home/domain/notifiers/calendar_offset_notifier.dart';
 
 class Calendar extends ConsumerStatefulWidget {
   const Calendar({super.key});

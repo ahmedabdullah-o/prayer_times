@@ -7,10 +7,10 @@ import 'package:prayer_times/core/enums/svg_icon_data_enums.dart';
 import 'package:prayer_times/core/extensions/string_extensions.dart';
 import 'package:prayer_times/core/services/prayer_times/iprayer_times.dart';
 import 'package:prayer_times/core/services/prayer_times/prayer_times_provider.dart';
+import 'package:prayer_times/features/home/domain/notifiers/next_prayer_notifier.dart';
 import 'package:prayer_times/core/style/colors.dart' as app;
 import 'package:prayer_times/core/style/fonts.dart';
 import 'package:prayer_times/core/style/icons.dart';
-import 'package:prayer_times/features/home/presentation/screens/home_screen.dart';
 
 class TopBar extends ConsumerWidget {
   const TopBar({super.key});
