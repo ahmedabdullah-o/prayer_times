@@ -110,7 +110,7 @@ class PrayerTimes implements IPrayerTimes {
     Inotifications notifications,
     IHiveStorage storage,
   ) async {
-    notifications.init();
+    await notifications.init();
     notifications.cancelAll();
 
     final todayPrayerTimes = prayerTimes(0);
