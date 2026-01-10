@@ -22,14 +22,14 @@ abstract class Inotifications {
   Future<void> send(NotificationModel notificationModel);
 
   /// Schedules notifications to be sent on the given [scheduleAt] value
-  /// 
-  /// [matchDateTimeComponents] is crucial if you want the same notification 
-  /// to be sent at the same [scheduleAt] value whether it's: 
+  ///
+  /// [matchDateTimeComponents] is crucial if you want the same notification
+  /// to be sent at the same [scheduleAt] value whether it's:
   /// * Exactly at a certain date & time (`DateTimeComponents.dateAndTime`)
   /// * Every day at the same time (`DateTimeComponents.time`)
   /// * Day of every month and time (`DateTimeComponents.dayOfMonthAndTime`)
   /// * Day of every week and time (`DateTimeComponents.dayOfWeekAndTime`)
-  /// 
+  ///
   /// This is especially beneficial when time doesn't change like you would do
   /// in a reminders app.
   Future<void> schedule(
@@ -37,6 +37,7 @@ abstract class Inotifications {
     DateTime scheduleAt, {
     DateTimeComponents? matchDateTimeComponents,
   });
+
   /// Cancel by notification ID. The id assigned in [NotificationModel].
   void cancel(int notificationId);
   void cancelAll();

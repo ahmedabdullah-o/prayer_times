@@ -21,8 +21,9 @@ abstract class IPrayerTimes {
   /// ```
   Map<PrayersEnums, DateTime> prayerTimes(int offset);
   PrayersEnums get nextPrayer;
+
   /// Schedules today prayer times.
-  /// 
+  ///
   /// Make sure to initialize [storage] before using this.
   Future<void> scheduleTodayPrayerNotifications(
     Inotifications notifications,

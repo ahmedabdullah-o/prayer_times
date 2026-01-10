@@ -6,7 +6,7 @@ import 'package:prayer_times/core/enums/athan_sound_enums.dart';
 import 'package:prayer_times/core/enums/prayers_enums.dart';
 
 /// Storage Service - implemented using Hive.
-/// 
+///
 /// The service uses default values when `null` is saved in the storage. You don't
 /// have to insert values before selecting them.
 abstract class IHiveStorage {
@@ -15,11 +15,11 @@ abstract class IHiveStorage {
   Future<bool> get isInitialized;
 
   /// initialize storage.
-  /// 
+  ///
   /// set [temp] to `true` when testing. this makes sure the service is using
   /// system temp directory. However, it's still important to clear the storage
   /// when finished with testing.
-  /// 
+  ///
   /// Unfortunately Hive doesn't support in-memory storage so it actually creates
   /// the storage on system disk.
   Future<void> init({bool temp = false});
