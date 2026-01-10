@@ -6,7 +6,7 @@ Brief description of the changes.
 ## Why?
 What problem does this solve or what feature does this add?
 
-### Issues fixed:
+### Issues fixed
 1. Fixes #(issue)
 
 ## How to test
