@@ -1,30 +1,5 @@
 # Prayer Times
-```mermaid
-gantt
-    title Production Timeline
-    dateFormat  YYYY-MM-DD
-    axisFormat %Y-%m-%d
-    tickInterval 3day
-    excludes friday
-
-    section Launch Plan
-    Development                     :active ,a1, 2026-1-13, 20d
-    Development Done                :crit, milestone, after a1
-    Play Store Approval             :crit, a2, after a1, 8d
-    App Approved                    :milestone, crit, m1, after a2,
-    Release                         :vert, v1, 2026-2-15,
-    Create Developer Account        :vert, d1, after b4,
-
-    section Development
-    Settings Screen Implementation  :b1, 2026-1-13, 4d
-    Qibla Implementation            :b2, after b1, 2d
-    Qibla Screen Implementation     :b3, after c1, 4d
-    Polish                          :b4, after b3, 5d
-    Testing & hotfixes              :crit, after b4, 14d
-
-    section Design
-    Qibla Screen Design             :c1, after b2, 3d
-```
+[![](https://mermaid.ink/img/pako:eNp1VMuO4jAQ_JWWJfbkoLwIJLfRoJVGWiR2Zy6z4mLiJliT2JHjIFjEv6_zAoaHT7bbVdVdbftIUsWRJCRj0piVBDuMMDnCUitep0YoCR-iwFxI7MKcGfypdMEMwKcdzmLhzOddjO1F1cdGn86ocEZ84Ey_3qRBvWM5-Jwdum3cp3nNsYKNFu1mt11hJ_yL1TLdwjJnfWCOO8xVWaA08GgkzAJ3CJR5FHzXjxzP8YJmyu8J5kriHUGqhaFQiBwrY-MU2MZmDczr8DaVA7wbpRFeylKrppwHeOZfgBRmvbhF9CjkD7O_ku3z8M48Pu1I_mCOrEJ4NpIdaovcDQb4jjfpoa8abe8GDyzpS5qq-mJlD-Vn0XVIb1tyZWAXeEdjhMwqeE81ooS3osyxCbP2PCTr760IezN-i3XO7k5f1bE-e9gyfIM90WphwQBLvYvaUuWi2sJz12ypg5olmPSwD9sOWxz8gK0yG7G3N_Vhuwe3wGsEbx2rRCYfZN8Fbvgu3tvyA04oyezTIInRNVJSoH1bzZIcG8IVMVtb_4okdsqZ_lqRlTxZTMnkX6WKAaZVnW1JsmF5ZVd12TzhuWCZZpcjKDnq1-Y6kGTSMpDkSPYkCcPxxA_c6Sz2ZuFk6gaUHEgSBNNx5MZuEAduFIVudKLkXyvpjuMw8uPYnfmTaeQGUUQJcmHfzKL7atof5_QfhwdIdA?type=png)](https://mermaid.live/edit#pako:eNp1VMuO4jAQ_JWWJfbkoLwIJLfRoJVGWiR2Zy6z4mLiJliT2JHjIFjEv6_zAoaHT7bbVdVdbftIUsWRJCRj0piVBDuMMDnCUitep0YoCR-iwFxI7MKcGfypdMEMwKcdzmLhzOddjO1F1cdGn86ocEZ84Ey_3qRBvWM5-Jwdum3cp3nNsYKNFu1mt11hJ_yL1TLdwjJnfWCOO8xVWaA08GgkzAJ3CJR5FHzXjxzP8YJmyu8J5kriHUGqhaFQiBwrY-MU2MZmDczr8DaVA7wbpRFeylKrppwHeOZfgBRmvbhF9CjkD7O_ku3z8M48Pu1I_mCOrEJ4NpIdaovcDQb4jjfpoa8abe8GDyzpS5qq-mJlD-Vn0XVIb1tyZWAXeEdjhMwqeE81ooS3osyxCbP2PCTr760IezN-i3XO7k5f1bE-e9gyfIM90WphwQBLvYvaUuWi2sJz12ypg5olmPSwD9sOWxz8gK0yG7G3N_Vhuwe3wGsEbx2rRCYfZN8Fbvgu3tvyA04oyezTIInRNVJSoH1bzZIcG8IVMVtb_4okdsqZ_lqRlTxZTMnkX6WKAaZVnW1JsmF5ZVd12TzhuWCZZpcjKDnq1-Y6kGTSMpDkSPYkCcPxxA_c6Sz2ZuFk6gaUHEgSBNNx5MZuEAduFIVudKLkXyvpjuMw8uPYnfmTaeQGUUQJcmHfzKL7atof5_QfhwdIdA)
 ## Why are we building this?
 You've probably seen a million apps like this one, but let us tell you why this one is special.
 
