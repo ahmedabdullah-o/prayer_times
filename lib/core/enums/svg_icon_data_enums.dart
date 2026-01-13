@@ -7,4 +7,12 @@ enum SvgIconData {
   mosque,
   compass,
   settings,
+  book,
+  crescent,
+  donation,
+  faq,
+  globe,
+  horizon,
+  notification,
+  shield,
 }
