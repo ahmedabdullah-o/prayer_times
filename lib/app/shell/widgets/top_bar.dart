@@ -13,7 +13,8 @@ import 'package:prayer_times/core/style/fonts.dart';
 import 'package:prayer_times/core/style/icons.dart';
 
 class TopBar extends ConsumerWidget {
-  const TopBar({super.key});
+  final String currentPath;
+  const TopBar(this.currentPath, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -21,8 +22,32 @@ class TopBar extends ConsumerWidget {
     final nextPrayer = ref.watch(nextPrayerProvider);
     final nextPrayerNotifier = ref.read(nextPrayerProvider.notifier);
 
+    final currentPathBar = {
+      "/home": _HomeScreenTopBar(prayerTimes, nextPrayer, nextPrayerNotifier),
+      "/settings": Padding(
+        padding: EdgeInsetsGeometry.fromLTRB(20, 4, 20, 20),
+        child: Text("Settings", style: Fonts.topBarTitle),
+      ),
+    };
+
+    return currentPathBar[currentPath] ?? SizedBox();
+  }
+}
+
+class _HomeScreenTopBar extends StatelessWidget {
+  final IPrayerTimes prayerTimes;
+  final PrayersEnums nextPrayer;
+  final NextPrayer nextPrayerNotifier;
+  const _HomeScreenTopBar(
+    this.prayerTimes,
+    this.nextPrayer,
+    this.nextPrayerNotifier,
+  );
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

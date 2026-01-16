@@ -42,7 +42,7 @@ class AppShell extends ConsumerWidget {
           ),
         ),
         // App Bar
-        Positioned(left: 0, right: 0, top: 0, child: TopBar()),
+        Positioned(left: 0, right: 0, top: 0, child: TopBar(currentPath)),
         // bottom nav bar
         Positioned(
           left: 0,

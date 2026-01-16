@@ -10,6 +10,7 @@ import 'package:prayer_times/core/services/prayer_times/prayer_times_provider.da
 import 'package:prayer_times/core/services/storage/hive/hive_storage_provider.dart';
 import 'package:prayer_times/core/style/colors.dart' as app;
 import 'package:prayer_times/features/home/presentation/screens/home_screen.dart';
+import 'package:prayer_times/features/home/presentation/screens/settings_screen.dart';
 import 'package:workmanager/workmanager.dart';
 
 @pragma('vm:entry-point')
@@ -36,6 +37,10 @@ final _router = GoRouter(
       builder: (context, state, child) => AppShell(child: child),
       routes: [
         GoRoute(path: '/home', builder: (context, state) => HomeScreen()),
+        GoRoute(
+          path: '/settings',
+          builder: (context, state) => SettingsScreen(),
+        ),
       ],
     ),
   ],
