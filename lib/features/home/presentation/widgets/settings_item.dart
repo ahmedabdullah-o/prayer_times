@@ -311,3 +311,100 @@ class _Option extends ConsumerWidget {
     );
   }
 }
+
+class AutoSettings extends StatefulWidget {
+  const AutoSettings({super.key});
+
+  @override
+  State<AutoSettings> createState() => _AutoSettingsState();
+}
+
+class _AutoSettingsState extends State<AutoSettings> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(20),
+      width: 400,
+      height: 124,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: app.Colors.primary50,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Auto Settings", style: Fonts.topBarTitle),
+              SizedBox(
+                width: 280,
+                child: Text(
+                  "Allow the app to automatically choose settings based on your current location.",
+                  style: Fonts.navigationBarItem(false),
+                  softWrap: true,
+                ),
+              ),
+            ],
+          ),
+          _CheckBox(),
+        ],
+      ),
+    );
+  }
+}
+
+class _CheckBox extends ConsumerStatefulWidget {
+  const _CheckBox();
+
+  @override
+  ConsumerState<_CheckBox> createState() => _CheckBoxState();
+}
+
+class _CheckBoxState extends ConsumerState<_CheckBox> {
+  bool? checked;
+  void onTap(IHiveStorage storage) {
+    setState(() => checked = !(checked ?? false));
+    storage.setAutoSettings(checked!);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final storage = ref.read(hiveStorageProvider);
+    return storage.when(
+      loading: () => CircularProgressIndicator(),
+      error: (e, s) => throw Exception(e.toString()),
+      data: (storage) => GestureDetector(
+        onTap: () => onTap(storage),
+        child: FutureBuilder(
+          future: storage.getAutoSettings(),
+          builder: (context, snapshot) {
+            final activated = snapshot.data;
+            if (snapshot.connectionState == ConnectionState.done) {
+              checked ??= activated!;
+              return Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(6),
+                  border: checked! ? null : Border.all(),
+                  color: checked! ? app.Colors.text : Colors.transparent,
+                ),
+                child: checked!
+                    ? SvgIcon(
+                        SvgIconData.checkMark,
+                        width: 24,
+                        height: 24,
+                        color: app.Colors.background,
+                      )
+                    : null,
+              );
+            } else {
+              return SizedBox(width: 24, height: 24);
+            }
+          },
+        ),
+      ),
+    );
+  }
+}

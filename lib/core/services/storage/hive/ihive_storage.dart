@@ -29,6 +29,10 @@ abstract class IHiveStorage {
   /// Permanently clear app storage.
   Future<void> clear();
 
+  Future<void> setAutoSettings(bool activated);
+
+  Future<bool> getAutoSettings();
+
   Future<void> setSavedCalculationMethod(CalculationMethod method);
 
   Future<CalculationMethod> get savedCalculationMethod;

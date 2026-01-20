@@ -15,4 +15,5 @@ enum SvgIconData {
   horizon,
   notification,
   shield,
+  checkMark,
 }

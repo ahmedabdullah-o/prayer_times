@@ -52,6 +52,9 @@ class HiveStorage implements IHiveStorage {
 
     // Prayer time calculation method
     "calculation_method": CalculationMethod.egyptian.name,
+
+    // Auto Settings
+    "auto_settings": "true",
   };
 
   @override
@@ -123,6 +126,44 @@ class HiveStorage implements IHiveStorage {
       return;
     } catch (e, s) {
       _logger.shout("clear(): failed to clear storage", e, s);
+      throw Exception();
+    }
+  }
+
+  @override
+  Future<void> setAutoSettings(bool activated) async {
+    try {
+      _logger.info("setAutoSettings(): writing to storage...");
+      await _generalSettingsBox.put("autoSettings", activated);
+      _logger.info("setAutoSettings(): write to storage success");
+      return;
+    } catch (e, s) {
+      _logger.shout("setAutoSettings(): storage write fail", e, s);
+      throw Exception();
+    }
+  }
+
+  @override
+  Future<bool> getAutoSettings() async {
+    try {
+      _logger.info("savedCalculationMethod: running query...");
+      final query =
+          _generalSettingsBox.get(
+                "auto_settings",
+                defaultValue: _generalDefault["auto_settings"],
+              )
+              as String;
+      _logger.info(
+        "savedCalculationMethod: query success with value (${query.toString()})",
+      );
+      _logger.info("savedCalculationMethod: parsing output from query...");
+      final output = {"true": true, "false": false}[query];
+      _logger.info(
+        "savedCalculationMethod: parse success with value of (${output.toString()})",
+      );
+      return Future.value(output);
+    } catch (e, s) {
+      _logger.shout("savedCalculationMethod: storage read fail", e, s);
       throw Exception();
     }
   }
