@@ -27,12 +27,14 @@ bool? _mainOnTap(SettingsEnums settings) {
       // TODO launch support page on browser
       _openLink("github.com/ahmedabdullah-o");
       return true;
+    case SettingsEnums.privacyPolicy:
+      // TODO show privacy policy document
+      return true;
     case SettingsEnums.notifications:
     case SettingsEnums.madhab:
     case SettingsEnums.calculationMethod:
     case SettingsEnums.language:
     case SettingsEnums.theme:
-    case SettingsEnums.privacyPolicy:
       return null;
   }
 }
@@ -165,7 +167,6 @@ class _SettingsItemState extends State<SettingsItem>
   late final SettingsEnums settings;
 
   void toggleExpand() {
-    debugPrint("$expanded");
     setState(() => expanded ^= true);
   }
 
@@ -178,6 +179,7 @@ class _SettingsItemState extends State<SettingsItem>
   @override
   Widget build(BuildContext context) {
     return Column(
+      spacing: 4,
       children: [
         GestureDetector(
           onTap: () {
@@ -219,7 +221,7 @@ class _Main extends ConsumerWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Row(
-            spacing: 10,
+            spacing: 8,
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -273,14 +275,13 @@ class _OptionsList extends StatelessWidget {
   final SettingsEnums settings;
   const _OptionsList(this.settings);
 
-  void onTap(String optionOnTap) {}
-
   @override
   Widget build(BuildContext context) {
     final optionsWidgets = _options(settings).map((item) {
       return _Option(item, settings);
     }).toList();
     return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       width: double.infinity,
       height: 148,
       decoration: BoxDecoration(
@@ -288,13 +289,22 @@ class _OptionsList extends StatelessWidget {
         color: app.Colors.foreground,
         boxShadow: [
           BoxShadow(
-            color: app.Colors.textSecondary,
-            offset: Offset(0, -2),
+            color: Colors.black12,
             blurRadius: 12,
+            blurStyle: BlurStyle.outer,
+            offset: Offset(0, 0),
+            spreadRadius: 0,
           ),
         ],
       ),
-      child: ListView(children: optionsWidgets),
+      child: Scrollbar(
+        interactive: true,
+        thumbVisibility: true,
+        child: ListView(
+          padding: EdgeInsets.only(right: 8),
+          children: optionsWidgets,
+        ),
+      ),
     );
   }
 }
@@ -311,15 +321,22 @@ class _Option extends ConsumerWidget {
       loading: () => CircularProgressIndicator(),
       error: (e, s) => throw Exception(e.toString()),
       data: (storage) {
-        return GestureDetector(
-          onTap: () => _optionOnTap(option, settings, storage),
-          child: Container(
-            height: 40,
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Text(
-              option.name.camelCaseToTitleCase(),
-              style: Fonts.prayerCardText(true),
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: GestureDetector(
+            onTap: () => _optionOnTap(option, settings, storage),
+            child: Container(
+              alignment: Alignment.centerLeft,
+              height: 36,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(18),
+                color: app.Colors.background,
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                option.name.camelCaseToTitleCase(),
+                style: Fonts.prayerCardText(false),
+              ),
             ),
           ),
         );
