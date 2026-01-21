@@ -121,6 +121,7 @@ Future<void> _optionOnTap(
   dynamic option,
   SettingsEnums settings,
   IHiveStorage storage,
+  ActiveItem activeItemNotifier,
 ) async {
   switch (settings) {
     case SettingsEnums.madhab:
@@ -143,6 +144,7 @@ Future<void> _optionOnTap(
     case SettingsEnums.support:
       break;
   }
+  activeItemNotifier.toggle(settings);
 }
 
 Future<void> _openLink(String url) async {
@@ -302,6 +304,7 @@ class _Option extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final storageProvider = ref.read(hiveStorageProvider);
+    final activeItemNotifier = ref.read(activeItemProvider.notifier);
     return storageProvider.when(
       loading: () => CircularProgressIndicator(),
       error: (e, s) => throw Exception(e.toString()),
@@ -309,7 +312,8 @@ class _Option extends ConsumerWidget {
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 4),
           child: GestureDetector(
-            onTap: () => _optionOnTap(option, settings, storage),
+            onTap: () =>
+                _optionOnTap(option, settings, storage, activeItemNotifier),
             child: Container(
               alignment: Alignment.centerLeft,
               height: 36,
