@@ -25,7 +25,7 @@ bool? _mainOnTap(SettingsEnums settings) {
       return true;
     case SettingsEnums.support:
       // TODO launch support page on browser
-      _openLink("github.com/ahmedabdullah-o");
+      _openLink("https://github.com/ahmedabdullah-o");
       return true;
     case SettingsEnums.privacyPolicy:
       // TODO show privacy policy document
