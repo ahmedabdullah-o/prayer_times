@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:prayer_times/core/enums/settings_enums.dart';
-import 'package:prayer_times/features/home/presentation/widgets/auto_settings.dart';
-import 'package:prayer_times/features/home/presentation/widgets/settings_item.dart';
+import 'package:prayer_times/features/settings/presentation/widgets/auto_settings.dart';
+import 'package:prayer_times/features/settings/presentation/widgets/settings_item.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});

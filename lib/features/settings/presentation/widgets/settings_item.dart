@@ -10,6 +10,7 @@ import 'package:prayer_times/core/services/storage/hive/ihive_storage.dart';
 import 'package:prayer_times/core/style/colors.dart' as app;
 import 'package:prayer_times/core/style/fonts.dart';
 import 'package:prayer_times/core/style/icons.dart';
+import 'package:prayer_times/features/settings/domain/notifiers/active_item_notifier.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 bool? _mainOnTap(SettingsEnums settings) {
@@ -331,22 +332,5 @@ class _Option extends ConsumerWidget {
         );
       },
     );
-  }
-}
-
-final activeItemProvider = NotifierProvider<ActiveItem, SettingsEnums?>(
-  ActiveItem.new,
-);
-
-class ActiveItem extends Notifier<SettingsEnums?> {
-  @override
-  SettingsEnums? build() => null;
-
-  void toggle(SettingsEnums settings) {
-    if (state == settings) {
-      state = null;
-      return;
-    }
-    state = settings;
   }
 }
