@@ -23,10 +23,13 @@ class TopBar extends ConsumerWidget {
     final nextPrayerNotifier = ref.read(nextPrayerProvider.notifier);
 
     final currentPathBar = {
-      "/home": _HomeScreenTopBar(prayerTimes, nextPrayer, nextPrayerNotifier),
-      "/settings": Padding(
-        padding: EdgeInsetsGeometry.fromLTRB(20, 4, 20, 20),
-        child: Text("Settings", style: Fonts.topBarTitle),
+      "/home": _TopBar(true, prayerTimes, nextPrayer, nextPrayerNotifier, null),
+      "/settings": _TopBar(
+        false,
+        prayerTimes,
+        nextPrayer,
+        nextPrayerNotifier,
+        "Settings",
       ),
     };
 
@@ -34,14 +37,18 @@ class TopBar extends ConsumerWidget {
   }
 }
 
-class _HomeScreenTopBar extends StatelessWidget {
+class _TopBar extends StatelessWidget {
+  final bool timer;
   final IPrayerTimes prayerTimes;
   final PrayersEnums nextPrayer;
   final NextPrayer nextPrayerNotifier;
-  const _HomeScreenTopBar(
+  final String? title;
+  const _TopBar(
+    this.timer,
     this.prayerTimes,
     this.nextPrayer,
     this.nextPrayerNotifier,
+    this.title,
   );
 
   @override
@@ -56,13 +63,15 @@ class _HomeScreenTopBar extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                nextPrayer.name.camelCaseToTitleCase(),
+                title ?? nextPrayer.name.camelCaseToTitleCase(),
                 style: Fonts.topBarTitle,
               ),
               _Location(),
             ],
           ),
-          _NextPrayerTimeLeft(prayerTimes, nextPrayer, nextPrayerNotifier),
+          timer
+              ? _NextPrayerTimeLeft(prayerTimes, nextPrayer, nextPrayerNotifier)
+              : SizedBox(),
         ],
       ),
     );
