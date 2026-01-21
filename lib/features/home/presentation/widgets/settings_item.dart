@@ -122,14 +122,17 @@ Future<void> _optionOnTap(
 ) async {
   switch (settings) {
     case SettingsEnums.madhab:
-    // TODO madhab storage implementation
+      // TODO madhab storage implementation
+      break;
     case SettingsEnums.calculationMethod:
       await storage.setSavedCalculationMethod(option);
       break;
     case SettingsEnums.language:
-    // TODO implement after implementing multiple language support
+      // TODO implement after implementing multiple language support
+      break;
     case SettingsEnums.theme:
-    // TODO implement after implementing dark theme support
+      // TODO implement after implementing dark theme support
+      break;
     case SettingsEnums.notifications:
     case SettingsEnums.other:
     case SettingsEnums.privacyPolicy:
@@ -161,7 +164,11 @@ class _SettingsItemState extends State<SettingsItem>
   bool expanded = false;
   late final SettingsEnums settings;
 
-  void toggleExpand() => setState(() => expanded ^= true);
+  void toggleExpand() {
+    debugPrint("$expanded");
+    setState(() => expanded ^= true);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -173,7 +180,9 @@ class _SettingsItemState extends State<SettingsItem>
     return Column(
       children: [
         GestureDetector(
-          onTap: () => _mainOnTap(settings) ?? () => toggleExpand(),
+          onTap: () {
+            _mainOnTap(settings) ?? toggleExpand();
+          },
           child: _Main(settings),
         ),
         expanded ? _OptionsList(settings) : SizedBox(),
@@ -199,9 +208,11 @@ class _Main extends ConsumerWidget {
           color: app.Colors.foreground,
           boxShadow: [
             BoxShadow(
-              color: app.Colors.textSecondary,
-              offset: Offset(0, -2),
-              blurRadius: 12,
+              color: Colors.black12,
+              blurRadius: 6,
+              blurStyle: BlurStyle.outer,
+              offset: Offset(0, 0),
+              spreadRadius: 0,
             ),
           ],
         ),
@@ -303,8 +314,13 @@ class _Option extends ConsumerWidget {
         return GestureDetector(
           onTap: () => _optionOnTap(option, settings, storage),
           child: Container(
+            height: 40,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
             padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Text(option.name.camelCaseToTitleCase()),
+            child: Text(
+              option.name.camelCaseToTitleCase(),
+              style: Fonts.prayerCardText(true),
+            ),
           ),
         );
       },
@@ -323,7 +339,7 @@ class _AutoSettingsState extends State<AutoSettings> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       width: 400,
       height: 124,
       decoration: BoxDecoration(
@@ -335,10 +351,11 @@ class _AutoSettingsState extends State<AutoSettings> {
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("Auto Settings", style: Fonts.topBarTitle),
+              Text("Auto Settings", style: Fonts.prayerCardText(true)),
               SizedBox(
-                width: 280,
+                width: 220,
                 child: Text(
                   "Allow the app to automatically choose settings based on your current location.",
                   style: Fonts.navigationBarItem(false),
