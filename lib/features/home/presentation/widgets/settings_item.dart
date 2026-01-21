@@ -153,41 +153,26 @@ Future<void> _openLink(String url) async {
   }
 }
 
-class SettingsItem extends StatefulWidget {
+class SettingsItem extends ConsumerWidget {
   final SettingsEnums settings;
-  const SettingsItem({super.key, required this.settings});
+  const SettingsItem(this.settings, {super.key});
+
+  void toggleExpand() {}
 
   @override
-  State<SettingsItem> createState() => _SettingsItemState();
-}
-
-class _SettingsItemState extends State<SettingsItem>
-    with SingleTickerProviderStateMixin {
-  bool expanded = false;
-  late final SettingsEnums settings;
-
-  void toggleExpand() {
-    setState(() => expanded ^= true);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    settings = widget.settings;
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final activeItem = ref.watch(activeItemProvider);
+    final activeItemNotifier = ref.read(activeItemProvider.notifier);
     return Column(
       spacing: 4,
       children: [
         GestureDetector(
           onTap: () {
-            _mainOnTap(settings) ?? toggleExpand();
+            _mainOnTap(settings) ?? activeItemNotifier.toggle(settings);
           },
           child: _Main(settings),
         ),
-        expanded ? _OptionsList(settings) : SizedBox(),
+        activeItem == settings ? _OptionsList(settings) : SizedBox(),
       ],
     );
   }
@@ -342,5 +327,22 @@ class _Option extends ConsumerWidget {
         );
       },
     );
+  }
+}
+
+final activeItemProvider = NotifierProvider<ActiveItem, SettingsEnums?>(
+  ActiveItem.new,
+);
+
+class ActiveItem extends Notifier<SettingsEnums?> {
+  @override
+  SettingsEnums? build() => null;
+
+  void toggle(SettingsEnums settings) {
+    if (state == settings) {
+      state = null;
+      return;
+    }
+    state = settings;
   }
 }
