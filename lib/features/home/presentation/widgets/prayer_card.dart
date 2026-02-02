@@ -98,7 +98,7 @@ class _SoundIconState extends ConsumerState<_SoundIcon> {
     final oldValue = await storage.getNotificationMute(_prayer);
     await storage.setNotificationMute(_prayer, oldValue ^ true);
     final newValue = await storage.getNotificationMute(_prayer);
-    prayerTimes.scheduleTodayPrayerNotifications(notifications, storage);
+    await prayerTimes.scheduleTodayPrayerNotifications(notifications, storage);
     setState(() {
       _mute = newValue;
     });
