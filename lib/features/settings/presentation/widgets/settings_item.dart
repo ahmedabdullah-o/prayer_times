@@ -29,7 +29,7 @@ bool? _mainOnTap(SettingsEnums settings) {
       _openLink("https://github.com/ahmedabdullah-o");
       return true;
     case SettingsEnums.privacyPolicy:
-      // TODO show privacy policy document
+      _openLink("https://github.com/ahmedabdullah-o/prayer_times/blob/main/docs/legal/privacy.md");
       return true;
     case SettingsEnums.notifications:
     case SettingsEnums.madhab:
