@@ -55,6 +55,9 @@ class HiveStorage implements IHiveStorage {
 
     // Auto Settings
     "auto_settings": "true",
+
+    // Madhab
+    "madhab": Madhab.shafi.name,
   };
 
   @override
@@ -144,7 +147,7 @@ class HiveStorage implements IHiveStorage {
   }
 
   @override
-  Future<bool> getAutoSettings() async {
+  Future<bool> get autoSettings async {
     try {
       _logger.info("savedCalculationMethod: running query...");
       final query =
@@ -164,6 +167,44 @@ class HiveStorage implements IHiveStorage {
       return Future.value(output);
     } catch (e, s) {
       _logger.shout("savedCalculationMethod: storage read fail", e, s);
+      throw Exception();
+    }
+  }
+
+  @override
+  Future<void> setSavedMadhab(Madhab madhab) async {
+    try {
+      _logger.info("setMahab(): writing to storage...");
+      await _generalSettingsBox.put("madhab", madhab.name);
+      _logger.info("setMadhab(): write to storage success");
+      return;
+    } catch (e, s) {
+      _logger.shout("setMadhab(): storage write fail", e, s);
+      throw Exception();
+    }
+  }
+
+  @override
+  Future<Madhab> get savedMadhab {
+    try {
+      _logger.info("savedMadhab: running query...");
+      final query =
+          _generalSettingsBox.get(
+                "madhab",
+                defaultValue: _generalDefault["madhab"],
+              )
+              as String;
+      _logger.info(
+        "savedMadhab: query success with value (${query.toString()})",
+      );
+      _logger.info("savedMadhab: parsing output from query...");
+      final output = Madhab.values.mapEnums[query];
+      _logger.info(
+        "savedMadhab: parse success with value of (${output.toString()})",
+      );
+      return Future.value(output);
+    } catch (e, s) {
+      _logger.shout("savedMadhab: storage read fail", e, s);
       throw Exception();
     }
   }

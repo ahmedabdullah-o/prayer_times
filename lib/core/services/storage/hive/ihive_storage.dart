@@ -31,7 +31,11 @@ abstract class IHiveStorage {
 
   Future<void> setAutoSettings(bool activated);
 
-  Future<bool> getAutoSettings();
+  Future<bool> get autoSettings;
+
+  Future<void> setSavedMadhab(Madhab madhab);
+
+  Future<Madhab> get savedMadhab;
 
   Future<void> setSavedCalculationMethod(CalculationMethod method);
 
@@ -49,8 +53,10 @@ abstract class IHiveStorage {
 
   Future<Coordinates> get savedCoordinates;
 
+  /// This is only general location/timezone (e.g: `Africa/Cairo`)
   Future<void> setLocation(TimezoneInfo location);
 
+  /// This is only general location/timezone (e.g: `Africa/Cairo`)
   Future<TimezoneInfo> get location;
 
   Future<void> setLocale(Locale locale);

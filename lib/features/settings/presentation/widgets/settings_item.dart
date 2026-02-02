@@ -29,7 +29,9 @@ bool? _mainOnTap(SettingsEnums settings) {
       _openLink("https://github.com/ahmedabdullah-o");
       return true;
     case SettingsEnums.privacyPolicy:
-      _openLink("https://github.com/ahmedabdullah-o/prayer_times/blob/main/docs/legal/privacy.md");
+      _openLink(
+        "https://github.com/ahmedabdullah-o/prayer_times/blob/main/docs/legal/privacy.md",
+      );
       return true;
     case SettingsEnums.notifications:
     case SettingsEnums.madhab:
@@ -76,8 +78,7 @@ Future<String> _selectedOption(
 ) async {
   switch (settings) {
     case SettingsEnums.madhab:
-      // TODO implement madhab storage
-      return "";
+      return (await storage.savedMadhab).name.camelCaseToTitleCase();
     case SettingsEnums.calculationMethod:
       return (await storage.savedCalculationMethod).name.camelCaseToTitleCase();
     case SettingsEnums.language:
@@ -126,7 +127,7 @@ Future<void> _optionOnTap(
 ) async {
   switch (settings) {
     case SettingsEnums.madhab:
-      // TODO madhab storage implementation
+      await storage.setSavedMadhab(option);
       break;
     case SettingsEnums.calculationMethod:
       await storage.setSavedCalculationMethod(option);

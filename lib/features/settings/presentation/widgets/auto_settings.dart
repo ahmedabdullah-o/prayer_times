@@ -73,7 +73,7 @@ class _CheckBoxState extends ConsumerState<_CheckBox> {
       data: (storage) => GestureDetector(
         onTap: () => onTap(storage),
         child: FutureBuilder(
-          future: storage.getAutoSettings(),
+          future: storage.autoSettings,
           builder: (context, snapshot) {
             final activated = snapshot.data;
             if (snapshot.connectionState == ConnectionState.done) {
