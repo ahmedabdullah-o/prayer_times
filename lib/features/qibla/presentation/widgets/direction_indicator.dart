@@ -20,80 +20,70 @@ class DirectionIndicator extends ConsumerWidget {
     return 'N';
   }
 
+  Widget _buildStatusContainer({required Widget child}) {
+    return Material(
+      color: Colors.transparent,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        decoration: BoxDecoration(
+          color: app.Colors.foreground,
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: child,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final qiblaAsync = ref.watch(qiblaDirectionProvider);
 
     return qiblaAsync.when(
-      loading: () => Material(
-        color: Colors.transparent,
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          decoration: BoxDecoration(
-            color: app.Colors.foreground,
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Text(
-            'Calculating...',
-            style: TextStyle(
-              color: app.Colors.textSecondary,
-              fontSize: 16,
-              fontFamily: 'MPLUSRounded1c',
-              fontWeight: FontWeight.w700,
-            ),
+      loading: () => _buildStatusContainer(
+        child: Text(
+          'Calculating...',
+          style: TextStyle(
+            color: app.Colors.textSecondary,
+            fontSize: 16,
+            fontFamily: 'MPLUSRounded1c',
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),
-      error: (error, stack) => Material(
-        color: Colors.transparent,
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          decoration: BoxDecoration(
-            color: app.Colors.foreground,
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Text(
-            'Location required',
-            style: TextStyle(
-              color: app.Colors.error,
-              fontSize: 16,
-              fontFamily: 'MPLUSRounded1c',
-              fontWeight: FontWeight.w700,
-            ),
+      error: (error, stack) => _buildStatusContainer(
+        child: Text(
+          'Location required',
+          style: TextStyle(
+            color: app.Colors.error,
+            fontSize: 16,
+            fontFamily: 'MPLUSRounded1c',
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),
       data: (qiblaDirection) {
         final cardinalDirection = _getCardinalDirection(qiblaDirection);
-        return Material(
-          color: Colors.transparent,
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            decoration: BoxDecoration(
-              color: app.Colors.foreground,
-              borderRadius: BorderRadius.circular(24),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              spacing: 12,
-              children: [
-                SvgIcon(
-                  SvgIconData.compass,
-                  width: 24,
-                  height: 24,
-                  color: app.Colors.primary,
+        return _buildStatusContainer(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            spacing: 12,
+            children: [
+              SvgIcon(
+                SvgIconData.compass,
+                width: 24,
+                height: 24,
+                color: app.Colors.primary,
+              ),
+              Text(
+                'Qibla Direction: ${qiblaDirection.toStringAsFixed(0)}° $cardinalDirection',
+                style: TextStyle(
+                  color: app.Colors.text,
+                  fontSize: 16,
+                  fontFamily: 'MPLUSRounded1c',
+                  fontWeight: FontWeight.w700,
                 ),
-                Text(
-                  'Qibla Direction: ${qiblaDirection.toStringAsFixed(0)}° $cardinalDirection',
-                  style: TextStyle(
-                    color: app.Colors.text,
-                    fontSize: 16,
-                    fontFamily: 'MPLUSRounded1c',
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },
