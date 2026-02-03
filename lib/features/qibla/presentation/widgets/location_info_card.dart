@@ -82,29 +82,32 @@ class LocationInfoCard extends ConsumerWidget {
   }
 
   Widget _buildCard(String location, String coordinates, String distance) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      decoration: BoxDecoration(
-        color: app.Colors.foreground,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 6,
-            blurStyle: BlurStyle.outer,
-            offset: Offset(0, 0),
-            spreadRadius: 0,
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          _InfoRow(label: 'Location', value: location),
-          SizedBox(height: 12),
-          _InfoRow(label: 'Coordinates', value: coordinates),
-          SizedBox(height: 12),
-          _InfoRow(label: 'Distance to Mecca', value: distance),
-        ],
+    return Material(
+      color: Colors.transparent,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        decoration: BoxDecoration(
+          color: app.Colors.foreground,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 6,
+              blurStyle: BlurStyle.outer,
+              offset: Offset(0, 0),
+              spreadRadius: 0,
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            _InfoRow(label: 'Location', value: location),
+            SizedBox(height: 12),
+            _InfoRow(label: 'Coordinates', value: coordinates),
+            SizedBox(height: 12),
+            _InfoRow(label: 'Distance to Mecca', value: distance),
+          ],
+        ),
       ),
     );
   }
