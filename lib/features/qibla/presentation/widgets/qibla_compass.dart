@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:prayer_times/core/services/compass/compass_provider.dart';
 import 'package:prayer_times/core/style/colors.dart' as app;
 import 'package:prayer_times/core/style/fonts.dart';
 import 'package:prayer_times/features/qibla/domain/notifiers/qibla_direction_notifier.dart';
@@ -10,14 +11,96 @@ class QiblaCompass extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final qiblaDirection = ref.watch(qiblaDirectionProvider);
+    final qiblaAsync = ref.watch(qiblaDirectionProvider);
+    final compass = ref.read(compassProvider);
     final size = MediaQuery.of(context).size.width * 0.7;
 
+    return qiblaAsync.when(
+      loading: () => SizedBox(
+        width: size,
+        height: size,
+        child: Center(
+          child: CircularProgressIndicator(color: app.Colors.primary),
+        ),
+      ),
+      error: (error, stack) => SizedBox(
+        width: size,
+        height: size,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.location_off, size: 48, color: app.Colors.error),
+              SizedBox(height: 8),
+              Text(
+                'Location access required',
+                style: TextStyle(
+                  color: app.Colors.textSecondary,
+                  fontFamily: 'MPLUSRounded1c',
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      data: (qiblaDirection) => StreamBuilder<double?>(
+        stream: compass.headingStream,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData || snapshot.data == null) {
+            // No compass data, show static compass
+            return _buildStaticCompass(size, qiblaDirection);
+          }
+
+          final heading = snapshot.data!;
+          final rotation = (qiblaDirection - heading) * pi / 180;
+
+          return SizedBox(
+            width: size,
+            height: size,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Compass background (rotates with device heading)
+                Transform.rotate(
+                  angle: -heading * pi / 180,
+                  child: CustomPaint(
+                    size: Size(size, size),
+                    painter: _CompassPainter(),
+                  ),
+                ),
+                // Qibla indicator with degree (points to Qibla direction)
+                Transform.rotate(
+                  angle: rotation,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.navigation,
+                        size: 60,
+                        color: app.Colors.primary,
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        '${qiblaDirection.toStringAsFixed(0)}°',
+                        style: Fonts.prayerCardText(true),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildStaticCompass(double size, double qiblaDirection) {
     return SizedBox(
       width: size,
       height: size,
       child: CustomPaint(
-        painter: _CompassPainter(qiblaDirection),
+        painter: _CompassPainter(),
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -37,10 +120,6 @@ class QiblaCompass extends ConsumerWidget {
 }
 
 class _CompassPainter extends CustomPainter {
-  final double qiblaDirection;
-
-  _CompassPainter(this.qiblaDirection);
-
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
@@ -103,7 +182,5 @@ class _CompassPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_CompassPainter oldDelegate) {
-    return oldDelegate.qiblaDirection != qiblaDirection;
-  }
+  bool shouldRepaint(_CompassPainter oldDelegate) => false;
 }

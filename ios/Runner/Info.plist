@@ -43,6 +43,10 @@
 	</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need your location to calculate the accurate Qibla direction for prayer.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We need your location to calculate the accurate Qibla direction for prayer.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 </dict>
