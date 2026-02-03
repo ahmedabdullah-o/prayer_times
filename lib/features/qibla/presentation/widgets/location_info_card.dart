@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:logging/logging.dart';
 import 'package:prayer_times/core/services/location/location_provider.dart';
 import 'package:prayer_times/core/style/colors.dart' as app;
 import 'package:prayer_times/features/qibla/domain/notifiers/qibla_direction_notifier.dart';
+
+final _logger = Logger('LocationInfoCard');
 
 // Provider to get city name from coordinates
 final cityNameProvider = FutureProvider<String>((ref) async {
@@ -26,7 +29,7 @@ final cityNameProvider = FutureProvider<String>((ref) async {
       return country.isNotEmpty ? '$city, $country' : city;
     }
   } catch (e) {
-    print('❌ Error getting city name: $e');
+    _logger.warning('Error getting city name: $e');
   }
 
   return 'Current Location';

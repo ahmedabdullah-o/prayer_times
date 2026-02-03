@@ -53,42 +53,79 @@ class QiblaCompass extends ConsumerWidget {
 
           final heading = snapshot.data!;
           final rotation = (qiblaDirection - heading) * pi / 180;
+          final rotationDegrees = rotation * 180 / pi;
+          final isFacingQibla = rotationDegrees.abs() < 5; // Within 5 degrees
 
-          return SizedBox(
-            width: size,
-            height: size,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                // Compass background (rotates with device heading)
-                Transform.rotate(
-                  angle: -heading * pi / 180,
-                  child: CustomPaint(
-                    size: Size(size, size),
-                    painter: _CompassPainter(),
-                  ),
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: size,
+                height: size,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Compass background (rotates with device heading)
+                    Transform.rotate(
+                      angle: -heading * pi / 180,
+                      child: CustomPaint(
+                        size: Size(size, size),
+                        painter: _CompassPainter(),
+                      ),
+                    ),
+                    // Qibla indicator with degree (points to Qibla direction)
+                    Transform.rotate(
+                      angle: rotation,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.navigation,
+                            size: 60,
+                            color: app.Colors.primary,
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            '${qiblaDirection.toStringAsFixed(0)}°',
+                            style: Fonts.prayerCardText(true),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                // Qibla indicator with degree (points to Qibla direction)
-                Transform.rotate(
-                  angle: rotation,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.navigation,
-                        size: 60,
-                        color: app.Colors.primary,
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        '${qiblaDirection.toStringAsFixed(0)}°',
-                        style: Fonts.prayerCardText(true),
-                      ),
-                    ],
+              ),
+              // "Facing Qibla" indicator
+              if (isFacingQibla) ...[
+                SizedBox(height: 16),
+                Material(
+                  color: Colors.transparent,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: app.Colors.primary,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      spacing: 8,
+                      children: [
+                        Icon(Icons.check_circle, color: Colors.white, size: 20),
+                        Text(
+                          'Facing Qibla',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontFamily: 'MPLUSRounded1c',
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
-            ),
+            ],
           );
         },
       ),

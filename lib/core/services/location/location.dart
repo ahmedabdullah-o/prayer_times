@@ -1,8 +1,11 @@
 import 'dart:math';
 import 'package:geolocator/geolocator.dart';
+import 'package:logging/logging.dart';
 import 'package:prayer_times/core/services/location/ilocation.dart';
 
 class Location implements ILocation {
+  final _logger = Logger('Location');
+
   // Kaaba coordinates in Mecca
   static const double meccaLat = 21.4224779;
   static const double meccaLng = 39.8251832;
@@ -27,29 +30,31 @@ class Location implements ILocation {
       // Check if location services are enabled
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        print('⚠️ Location services are disabled');
+        _logger.warning('Location services are disabled');
         return null;
       }
 
       // Check permission
       if (!await hasPermission()) {
-        print('⚠️ Location permission not granted, requesting...');
+        _logger.info('Location permission not granted, requesting...');
         if (!await requestPermission()) {
-          print('❌ Location permission denied by user');
+          _logger.warning('Location permission denied by user');
           return null;
         }
-        print('✅ Location permission granted');
+        _logger.info('Location permission granted');
       }
 
       // Get current position
-      print('📍 Fetching GPS position...');
+      _logger.fine('Fetching GPS position...');
       final position = await Geolocator.getCurrentPosition(
         locationSettings: LocationSettings(accuracy: LocationAccuracy.high),
       );
-      print('✅ GPS position: ${position.latitude}, ${position.longitude}');
+      _logger.info(
+        'GPS position acquired: ${position.latitude.toStringAsFixed(4)}, ${position.longitude.toStringAsFixed(4)}',
+      );
       return position;
     } catch (e) {
-      print('❌ Error getting location: $e');
+      _logger.severe('Error getting location: $e');
       return null;
     }
   }
