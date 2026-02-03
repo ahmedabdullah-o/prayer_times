@@ -36,19 +36,7 @@ class QiblaScreen extends ConsumerWidget {
             SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.all(20.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  SizedBox(height: 20),
-                  QiblaCompass(),
-                  SizedBox(height: 32),
-                  LocationInfoCard(),
-                  SizedBox(height: 24),
-                  DirectionIndicator(),
-                ],
-              ),
+              child: _QiblaMainColumn(),
             ),
           ],
         ),
@@ -69,6 +57,27 @@ class QiblaScreen extends ConsumerWidget {
             ),
           ),
         ),
+      ],
+    );
+  }
+}
+
+class _QiblaMainColumn extends StatelessWidget {
+  const _QiblaMainColumn();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        SizedBox(height: 20),
+        QiblaCompass(),
+        SizedBox(height: 32),
+        LocationInfoCard(),
+        SizedBox(height: 24),
+        DirectionIndicator(),
       ],
     );
   }
