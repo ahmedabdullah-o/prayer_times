@@ -30,8 +30,8 @@ class NavigationBar extends StatelessWidget {
             label: 'Qibla',
             iconData: SvgIconData.compass,
             showLabel: true,
-            active: false,
-            onTap: () => context.go('/home'),
+            active: currentPath == '/qibla',
+            onTap: () => context.go('/qibla'),
           ),
           _NavItem(
             label: 'Settings',
