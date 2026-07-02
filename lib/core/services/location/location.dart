@@ -1,10 +1,11 @@
 import 'dart:math';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:logging/logging.dart';
 import 'package:prayer_times/core/services/location/ilocation.dart';
 
 class Location implements ILocation {
-  final _logger = Logger('Location');
+  final _logger = Logger('core - services - location');
 
   // Kaaba coordinates in Mecca
   static const double meccaLat = 21.4224779;
@@ -25,7 +26,7 @@ class Location implements ILocation {
   }
 
   @override
-  Future<Position?> getCurrentPosition() async {
+  Future<Position?> get currentPosition async {
     try {
       // Check if location services are enabled
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -57,6 +58,31 @@ class Location implements ILocation {
       _logger.severe('Error getting location: $e');
       return null;
     }
+  }
+
+  @override
+  Future<Placemark?> get placeName async {
+
+      final position = await currentPosition;
+
+      if (position == null) {
+        return null;
+      }
+
+      try {
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+          position.latitude,
+          position.longitude,
+        );
+
+        if (placemarks.isNotEmpty) {
+          return placemarks.first;
+        }
+      } catch (e) {
+        _logger.warning('Error getting city name: $e');
+      }
+
+      return null;
   }
 
   @override

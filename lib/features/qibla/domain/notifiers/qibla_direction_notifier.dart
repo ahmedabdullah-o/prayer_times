@@ -8,7 +8,7 @@ final _logger = Logger('QiblaDirection');
 // Provider for current GPS position
 final currentPositionProvider = FutureProvider<Position?>((ref) async {
   final location = ref.read(locationProvider);
-  return await location.getCurrentPosition();
+  return await location.currentPosition;
 });
 
 // Provider for Qibla direction based on current location

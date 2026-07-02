@@ -2,15 +2,19 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logging/logging.dart';
 import 'package:prayer_times/core/enums/prayers_enums.dart';
 import 'package:prayer_times/core/enums/svg_icon_data_enums.dart';
 import 'package:prayer_times/core/extensions/string_extensions.dart';
+import 'package:prayer_times/core/services/location/location_provider.dart';
 import 'package:prayer_times/core/services/prayer_times/iprayer_times.dart';
 import 'package:prayer_times/core/services/prayer_times/prayer_times_provider.dart';
 import 'package:prayer_times/features/home/domain/notifiers/next_prayer_notifier.dart';
 import 'package:prayer_times/core/style/colors.dart' as app;
 import 'package:prayer_times/core/style/fonts.dart';
 import 'package:prayer_times/core/style/icons.dart';
+
+final _logger = Logger('widgets - appshell - topbar');
 
 class TopBar extends ConsumerWidget {
   const TopBar({super.key});
@@ -108,9 +112,11 @@ class _NextPrayerTimeLeftState extends ConsumerState<_NextPrayerTimeLeft> {
   }
 }
 
-class _Location extends StatelessWidget {
+class _Location extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    _logger.info('_Location: build...');
+    final location = ref.watch(locationProvider);
     return GestureDetector(
       onTap: () {}, // TODO: Open location settings screen
       child: Row(
@@ -122,7 +128,26 @@ class _Location extends StatelessWidget {
             height: 18,
             color: app.Colors.text,
           ),
-          Text('Cairo', style: Fonts.location),
+          FutureBuilder(
+            future: location.placeName,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                if (snapshot.data!.name == null) {
+                  _logger.warning(
+                    '_Location: using fallback value for location',
+                  );
+                  return Text('Cairo', style: Fonts.location);
+                } else {
+                  _logger.info('_Location: using data for location');
+                  return Text(
+                    snapshot.data!.subAdministrativeArea ?? 'Cairo',
+                    style: Fonts.location,
+                  );
+                }
+              }
+              return Text('Loading...', style: Fonts.location);
+            },
+          ),
         ],
       ),
     );

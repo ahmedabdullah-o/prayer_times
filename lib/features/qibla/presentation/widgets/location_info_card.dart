@@ -24,7 +24,7 @@ final cityNameProvider = FutureProvider<String>((ref) async {
 
     if (placemarks.isNotEmpty) {
       final place = placemarks.first;
-      final city = place.locality ?? place.subAdministrativeArea ?? 'Unknown';
+      final city = place.subAdministrativeArea ?? place.locality ?? 'Unknown';
       final country = place.country ?? '';
       return country.isNotEmpty ? '$city, $country' : city;
     }

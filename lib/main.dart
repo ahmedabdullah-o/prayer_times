@@ -53,7 +53,7 @@ void main() {
         '${record.level.name}: ${record.loggerName}: ${record.message}',
       );
       if (record.error != null) {
-        debugPrint('${record.error}\n${record.stackTrace}');
+        debugPrint('${record.error}\n${record.stackTrace}' );
       }
     }
   });

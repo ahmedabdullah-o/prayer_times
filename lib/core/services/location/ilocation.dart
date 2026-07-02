@@ -1,3 +1,4 @@
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
 abstract class ILocation {
@@ -8,7 +9,10 @@ abstract class ILocation {
   Future<bool> requestPermission();
 
   /// Get current GPS position
-  Future<Position?> getCurrentPosition();
+  Future<Position?> get currentPosition;
+
+  /// Get current city name
+  Future<Placemark?> get placeName;
 
   /// Calculate Qibla direction from given coordinates
   Future<double> calculateQiblaDirection(double latitude, double longitude);
