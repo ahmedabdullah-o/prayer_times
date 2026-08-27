@@ -96,11 +96,12 @@ class _SoundIconState extends ConsumerState<_SoundIcon> {
     IPrayerTimes prayerTimes,
   ) async {
     final oldValue = await storage.getNotificationMute(_prayer);
-    await storage.setNotificationMute(_prayer, oldValue ^ true);
-    final newValue = await storage.getNotificationMute(_prayer);
-    prayerTimes.scheduleTodayPrayerNotifications(notifications, storage);
+    await storage.setNotificationMute(_prayer, !oldValue);
+    // Reschedule so the toggled prayer's notification is cancelled/added.
+    await prayerTimes.scheduleTodayPrayerNotifications(notifications, storage);
+    if (!mounted) return;
     setState(() {
-      _mute = newValue;
+      _mute = !oldValue;
     });
   }
 

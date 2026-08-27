@@ -1,5 +1,5 @@
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:prayer_times/core/services/notifications/notification_model.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 /// Local Notifications - implemented using `flutter_local_notifications`
 ///
@@ -10,10 +10,10 @@ abstract class Inotifications {
   /// Initialization on one isolate doesn't mean it's gonna work on the rest of the isolates.
   Future<void> init();
 
-  /// Checks if the permission is granted on the current platform whether it's Android or iOS
+  /// Checks if the permission is granted on Android
   Future<bool?> isPermissionGranted();
 
-  /// Requests permission from the user. Works on Android and iOS.
+  /// Requests permission from the user. Works on Android.
   ///
   /// Don't await this method unless you need to send a notification ASAP.
   Future<void> requestPermissions();
@@ -21,25 +21,20 @@ abstract class Inotifications {
   /// Sends notifications instantly.
   Future<void> send(NotificationModel notificationModel);
 
-  /// Schedules notifications to be sent on the given [scheduleAt] value
+  /// Schedules notifications to be sent at the given [scheduleAt] instant.
   ///
-  /// [matchDateTimeComponents] is crucial if you want the same notification
-  /// to be sent at the same [scheduleAt] value whether it's:
-  /// * Exactly at a certain date & time (`DateTimeComponents.dateAndTime`)
-  /// * Every day at the same time (`DateTimeComponents.time`)
-  /// * Day of every month and time (`DateTimeComponents.dayOfMonthAndTime`)
-  /// * Day of every week and time (`DateTimeComponents.dayOfWeekAndTime`)
+  /// [scheduleAt] must already be converted to the desired timezone
+  /// (e.g. the user's stored timezone) using `tz.TZDateTime.from(...)`.
   ///
-  /// This is especially beneficial when time doesn't change like you would do
-  /// in a reminders app.
+  /// Uses exact alarm scheduling when the OS allows it, and falls back to
+  /// inexact scheduling otherwise (required on Android 14+).
   Future<void> schedule(
     NotificationModel notificationModel,
-    DateTime scheduleAt, {
-    DateTimeComponents? matchDateTimeComponents,
-  });
+    tz.TZDateTime scheduleAt,
+  );
 
   /// Cancel by notification ID. The id assigned in [NotificationModel].
-  void cancel(int notificationId);
-  void cancelAll();
-  void cancelAllScheduled();
+  Future<void> cancel(int notificationId);
+  Future<void> cancelAll();
+  Future<void> cancelAllScheduled();
 }
