@@ -161,7 +161,7 @@ Routes:
 
 **Notification details:**
 - Each Athan sound gets its own Android notification channel (`prayer_channel_<sound>`) — on Android 8+ the channel sound overrides per-notification sound. Details are built by `NotificationModel.prayerNotificationDetails()`.
-- Raw sound assets live in `android/app/src/main/res/raw/`: `notification_sound.mp3` (default) and `athan_<name>.mp3` for other sounds (e.g. `athan_abdulbasit.mp3`).
+- Raw sound assets live in `android/app/src/main/res/raw/` as `athan_<name>.mp3` (e.g. `athan_abdulbasit.mp3`); `AthanSoundEnums.defaultSound` plays no custom audio (system notification sound only).
 - `schedule()` checks `canScheduleExactNotifications()` and falls back to `AndroidScheduleMode.inexactAllowWhileIdle` when exact alarms are denied (Android 14+).
 - Notification taps rely on Android's default launch behavior (open the app); no custom tap handling.
 - Prayer notifications use stable IDs (`prayer.index + 1`); past prayers are skipped when scheduling.

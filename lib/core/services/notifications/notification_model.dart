@@ -62,7 +62,10 @@ class NotificationModel {
   ///
   /// Each sound gets its own Android notification channel because on Android
   /// 8+ the channel sound overrides any per-notification sound.
+  /// [AthanSoundEnums.defaultSound] plays no custom Athan audio (system
+  /// notification sound only).
   static NotificationDetails prayerNotificationDetails(AthanSoundEnums sound) {
+    final bool withAthanSound = sound != AthanSoundEnums.defaultSound;
     return NotificationDetails(
       android: AndroidNotificationDetails(
         'prayer_channel_${sound.name}',
@@ -71,12 +74,14 @@ class NotificationModel {
             'Prayer time notifications using the ${sound.name} Athan sound',
         importance: Importance.max,
         priority: Priority.high,
-        playSound: true,
+        playSound: withAthanSound,
         enableVibration: true,
         category: AndroidNotificationCategory.alarm,
         visibility: NotificationVisibility.public,
         showWhen: false,
-        sound: RawResourceAndroidNotificationSound(_soundResource(sound)),
+        sound: withAthanSound
+            ? RawResourceAndroidNotificationSound(_soundResource(sound))
+            : null,
       ),
     );
   }
@@ -84,12 +89,9 @@ class NotificationModel {
   /// The Android raw resource name (without extension) for the given Athan
   /// [sound].
   ///
-  /// Make sure a matching file exists in `android/app/src/main/res/raw/`:
-  /// - `AthanSoundEnums.defaultSound` -> `notification_sound.mp3`
-  /// - any other sound -> `athan_<name>.mp3` (e.g. `athan_abdulbasit.mp3`)
+  /// A matching file must exist in `android/app/src/main/res/raw/`:
+  /// `athan_<name>.mp3` (e.g. `athan_abdulbasit.mp3`).
   static String _soundResource(AthanSoundEnums sound) {
-    return sound == AthanSoundEnums.defaultSound
-        ? 'notification_sound'
-        : 'athan_${sound.name}';
+    return 'athan_${sound.name}';
   }
 }
