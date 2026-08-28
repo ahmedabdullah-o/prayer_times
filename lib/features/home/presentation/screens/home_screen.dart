@@ -13,51 +13,56 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final prayerTimesRef = ref.read(prayerTimesProvider);
     final prayerEnums = PrayersEnums.values;
 
     final calendarOffset = ref.watch(calendarOffsetProvider);
-    final todayPrayerTimes = prayerTimesRef.prayerTimes(calendarOffset);
-    final nextPrayer = ref.watch(nextPrayerProvider);
+    final todayPrayerTimes = ref.watch(
+      prayerTimesForOffsetProvider(calendarOffset),
+    );
+    final nextPrayer = ref.watch(nextPrayerProvider).value;
 
     final storage = ref.watch(hiveStorageProvider);
 
     return storage.when(
       loading: () => CircularProgressIndicator(),
       error: (e, s) => throw Exception(e.toString()),
-      data: (storage) => Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Calendar(),
-                ...List.generate(
-                  prayerEnums.length,
-                  (i) => FutureBuilder<bool>(
-                    future: storage.getNotificationMute(prayerEnums[i]),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState != ConnectionState.done) {
-                        return SizedBox(height: 48);
-                      }
-                      return PrayerCard(
-                        prayerEnums[i],
-                        todayPrayerTimes[prayerEnums[i]]!,
-                        nextPrayer == prayerEnums[i] && calendarOffset == 0,
-                        snapshot.data ?? false,
-                      );
-                    },
+      data: (storage) => todayPrayerTimes.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, s) => throw Exception(e.toString()),
+        data: (todayPrayerTimes) => Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Calendar(),
+                  ...List.generate(
+                    prayerEnums.length,
+                    (i) => FutureBuilder<bool>(
+                      future: storage.getNotificationMute(prayerEnums[i]),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState != ConnectionState.done) {
+                          return SizedBox(height: 48);
+                        }
+                        return PrayerCard(
+                          prayerEnums[i],
+                          todayPrayerTimes[prayerEnums[i]]!,
+                          nextPrayer == prayerEnums[i] && calendarOffset == 0,
+                          snapshot.data ?? false,
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

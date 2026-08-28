@@ -155,6 +155,13 @@ class HiveStorage implements IHiveStorage {
       );
       _logger.info("savedCalculationMethod: parsing output from query...");
       final output = CalculationMethod.values.mapEnums[query];
+      if (output == null) {
+        _logger.warning(
+          "savedCalculationMethod: unknown stored method ($query), "
+          'falling back to default (${CalculationMethod.egyptian.name})',
+        );
+        return Future.value(CalculationMethod.egyptian);
+      }
       _logger.info(
         "savedCalculationMethod: parse success with value of (${output.toString()})",
       );
@@ -227,6 +234,15 @@ class HiveStorage implements IHiveStorage {
       );
       _logger.info("getNotificationSound(): parsing output from query...");
       final output = AthanSoundEnums.values.mapEnums[query];
+      if (output == null) {
+        final fallback =
+            _notificationSoundDefault[prayer] ?? AthanSoundEnums.defaultSound;
+        _logger.warning(
+          "getNotificationSound(): unknown stored sound ($query), "
+          'falling back to default (${fallback.name})',
+        );
+        return Future.value(fallback);
+      }
       _logger.info(
         "getNotificationSound(): parse success with value (${output.toString()})",
       );

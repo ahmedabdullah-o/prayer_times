@@ -1,15 +1,21 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_times/core/enums/prayers_enums.dart';
 import 'package:prayer_times/core/services/prayer_times/prayer_times_provider.dart';
+import 'package:prayer_times/core/services/storage/hive/hive_storage_provider.dart';
 
-final nextPrayerProvider = NotifierProvider<NextPrayer, PrayersEnums>(
+final nextPrayerProvider = AsyncNotifierProvider<NextPrayer, PrayersEnums>(
   NextPrayer.new,
 );
 
-class NextPrayer extends Notifier<PrayersEnums> {
-  final prayerTimes = ProviderContainer().read(prayerTimesProvider);
+class NextPrayer extends AsyncNotifier<PrayersEnums> {
   @override
-  PrayersEnums build() => prayerTimes.nextPrayer;
+  Future<PrayersEnums> build() async {
+    final storage = await ref.watch(hiveStorageProvider.future);
+    return ref.watch(prayerTimesProvider).nextPrayer(storage);
+  }
 
-  void update() => state = prayerTimes.nextPrayer;
+  Future<void> advance() async {
+    final storage = await ref.read(hiveStorageProvider.future);
+    state = AsyncData(await ref.read(prayerTimesProvider).nextPrayer(storage));
+  }
 }

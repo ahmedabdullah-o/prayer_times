@@ -9,6 +9,7 @@ import 'package:prayer_times/core/extensions/string_extensions.dart';
 import 'package:prayer_times/core/services/location/location_provider.dart';
 import 'package:prayer_times/core/services/prayer_times/iprayer_times.dart';
 import 'package:prayer_times/core/services/prayer_times/prayer_times_provider.dart';
+import 'package:prayer_times/core/services/storage/hive/hive_storage_provider.dart';
 import 'package:prayer_times/features/home/domain/notifiers/next_prayer_notifier.dart';
 import 'package:prayer_times/core/style/colors.dart' as app;
 import 'package:prayer_times/core/style/fonts.dart';
@@ -22,8 +23,7 @@ class TopBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final prayerTimes = ref.read(prayerTimesProvider);
-    final nextPrayer = ref.watch(nextPrayerProvider);
-    final nextPrayerNotifier = ref.read(nextPrayerProvider.notifier);
+    final nextPrayer = ref.watch(nextPrayerProvider).value;
 
     return Padding(
       padding: const EdgeInsets.all(20),
@@ -35,13 +35,15 @@ class TopBar extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                nextPrayer.name.camelCaseToTitleCase(),
+                nextPrayer != null
+                    ? nextPrayer.name.camelCaseToTitleCase()
+                    : '...',
                 style: Fonts.topBarTitle,
               ),
               _Location(),
             ],
           ),
-          _NextPrayerTimeLeft(prayerTimes, nextPrayer, nextPrayerNotifier),
+          _NextPrayerTimeLeft(prayerTimes),
         ],
       ),
     );
@@ -50,13 +52,7 @@ class TopBar extends ConsumerWidget {
 
 class _NextPrayerTimeLeft extends ConsumerStatefulWidget {
   final IPrayerTimes prayerTimes;
-  final PrayersEnums nextPrayer;
-  final NextPrayer nextPrayerNotifier;
-  const _NextPrayerTimeLeft(
-    this.prayerTimes,
-    this.nextPrayer,
-    this.nextPrayerNotifier,
-  );
+  const _NextPrayerTimeLeft(this.prayerTimes);
 
   @override
   ConsumerState<_NextPrayerTimeLeft> createState() =>
@@ -64,49 +60,63 @@ class _NextPrayerTimeLeft extends ConsumerStatefulWidget {
 }
 
 class _NextPrayerTimeLeftState extends ConsumerState<_NextPrayerTimeLeft> {
-  late final NextPrayer _nextPrayerNotifier = widget.nextPrayerNotifier;
-  late final PrayersEnums _nextPrayer = widget.nextPrayer;
-  late DateTime _nextPrayerTime = widget.prayerTimes.prayerTimes(
-    0,
-  )[_nextPrayer]!;
-  late Duration _timeLeft = widget.prayerTimes
-      .prayerTimes(0)[_nextPrayer]!
-      .difference(DateTime.now());
-  bool prayerPassed = false;
+  PrayersEnums? _loadedFor;
+  DateTime? _nextPrayerTime;
+  Duration _timeLeft = Duration.zero;
+  bool _passed = false;
   Timer? _timer;
 
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      setState(() {
-        _timeLeft = _nextPrayerTime.difference(DateTime.now());
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) => _tick());
+  }
 
-        if (prayerPassed) {
-          _nextPrayerNotifier.update();
-          _nextPrayerTime = widget.prayerTimes.prayerTimes(0)[_nextPrayer]!;
-          _timeLeft = _nextPrayerTime.difference(DateTime.now());
+  void _tick() {
+    final nextPrayerTime = _nextPrayerTime;
+    if (nextPrayerTime == null) return;
+    final timeLeft = nextPrayerTime.difference(DateTime.now());
+    if (timeLeft.isNegative && !_passed) {
+      _passed = true;
+      // Advance to the next prayer once its time has passed.
+      ref.read(nextPrayerProvider.notifier).advance();
+    }
+    setState(() => _timeLeft = timeLeft);
+  }
 
-          prayerPassed = false;
-        }
-
-        if (_timeLeft.isNegative) {
-          prayerPassed = true;
-        }
-      });
+  Future<void> _load(PrayersEnums next) async {
+    final storage = await ref.read(hiveStorageProvider.future);
+    final times = await widget.prayerTimes.prayerTimes(storage, 0);
+    if (!mounted) return;
+    setState(() {
+      _nextPrayerTime = times[next];
+      _timeLeft = _nextPrayerTime?.difference(DateTime.now()) ?? Duration.zero;
+      _passed = false;
     });
+  }
+
+  String _format(Duration d) {
+    if (d.isNegative) d = Duration.zero;
+    return "${d.inHours.toString().padLeft(2, '0')}:${(d.inMinutes - d.inHours * 60).toString().padLeft(2, '0')}:${(d.inSeconds - d.inMinutes * 60).toString().padLeft(2, '0')}";
   }
 
   @override
   void dispose() {
-    super.dispose();
     _timer?.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final nextPrayerAsync = ref.watch(nextPrayerProvider);
+    nextPrayerAsync.whenData((next) {
+      if (_loadedFor != next) {
+        _loadedFor = next;
+        _load(next);
+      }
+    });
     return Text(
-      "${_timeLeft.inHours.toString().padLeft(2, '0')}:${(_timeLeft.inMinutes - _timeLeft.inHours * 60).toString().padLeft(2, '0')}:${(_timeLeft.inSeconds - _timeLeft.inMinutes * 60).toString().padLeft(2, '0')}",
+      _nextPrayerTime == null ? '--:--:--' : _format(_timeLeft),
       style: Fonts.topBarTimeLeft,
     );
   }

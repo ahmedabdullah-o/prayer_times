@@ -7,24 +7,32 @@ import 'package:prayer_times/core/services/storage/hive/ihive_storage.dart';
 /// This service works according to data stored in local storage to determine
 /// parameters for it's calculation like:
 /// * Coordinates
-/// * Madhab
 /// * CalculationMethod
+/// * Timezone
 abstract class IPrayerTimes {
   /// Returns prayer times in the form of a map of the available [PrayersEnums]
-  /// paired with each's time according to the date adjacent to today by [offset] days.
+  /// paired with each's time for the day adjacent to today by [offset] days,
+  /// expressed in the stored timezone.
   ///
   /// example:
   /// ```dart
-  /// prayerTimes(0); // prayer times today
-  /// prayerTimes(1); // prayer times tomorrow
-  /// prayerTimes(-1); // prayer times yesterday
+  /// prayerTimes(storage, 0); // prayer times today
+  /// prayerTimes(storage, 1); // prayer times tomorrow
+  /// prayerTimes(storage, -1); // prayer times yesterday
   /// ```
-  Map<PrayersEnums, DateTime> prayerTimes(int offset);
-  PrayersEnums get nextPrayer;
+  Future<Map<PrayersEnums, DateTime>> prayerTimes(
+    IHiveStorage storage,
+    int offset,
+  );
 
-  /// Schedules today prayer times.
+  /// Returns the next obligatory prayer that hasn't occurred yet.
+  Future<PrayersEnums> nextPrayer(IHiveStorage storage);
+
+  /// Schedules notifications for today's remaining prayer times, using the
+  /// mute state and Athan sound stored for each prayer.
   ///
-  /// Make sure to initialize [storage] before using this.
+  /// Prayers that already occurred today are skipped. Make sure to
+  /// initialize [storage] before using this.
   Future<void> scheduleTodayPrayerNotifications(
     Inotifications notifications,
     IHiveStorage storage,

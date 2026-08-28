@@ -49,7 +49,7 @@ class Location implements ILocation {
       _logger.fine('Fetching GPS position...');
       final position = await Geolocator.getCurrentPosition(
         locationSettings: LocationSettings(accuracy: LocationAccuracy.high),
-      );
+      ).timeout(Duration(seconds: 10));
       _logger.info(
         'GPS position acquired: ${position.latitude.toStringAsFixed(4)}, ${position.longitude.toStringAsFixed(4)}',
       );
@@ -62,27 +62,26 @@ class Location implements ILocation {
 
   @override
   Future<Placemark?> get placeName async {
+    final position = await currentPosition;
 
-      final position = await currentPosition;
-
-      if (position == null) {
-        return null;
-      }
-
-      try {
-        List<Placemark> placemarks = await placemarkFromCoordinates(
-          position.latitude,
-          position.longitude,
-        );
-
-        if (placemarks.isNotEmpty) {
-          return placemarks.first;
-        }
-      } catch (e) {
-        _logger.warning('Error getting city name: $e');
-      }
-
+    if (position == null) {
       return null;
+    }
+
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      if (placemarks.isNotEmpty) {
+        return placemarks.first;
+      }
+    } catch (e) {
+      _logger.warning('Error getting city name: $e');
+    }
+
+    return null;
   }
 
   @override

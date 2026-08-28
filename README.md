@@ -1,39 +1,44 @@
 # Prayer Times
-[![](https://mermaid.ink/img/pako:eNp1VMuO4jAQ_JWWJfbkoLwIJLfRoJVGWiR2Zy6z4mLiJliT2JHjIFjEv6_zAoaHT7bbVdVdbftIUsWRJCRj0piVBDuMMDnCUitep0YoCR-iwFxI7MKcGfypdMEMwKcdzmLhzOddjO1F1cdGn86ocEZ84Ey_3qRBvWM5-Jwdum3cp3nNsYKNFu1mt11hJ_yL1TLdwjJnfWCOO8xVWaA08GgkzAJ3CJR5FHzXjxzP8YJmyu8J5kriHUGqhaFQiBwrY-MU2MZmDczr8DaVA7wbpRFeylKrppwHeOZfgBRmvbhF9CjkD7O_ku3z8M48Pu1I_mCOrEJ4NpIdaovcDQb4jjfpoa8abe8GDyzpS5qq-mJlD-Vn0XVIb1tyZWAXeEdjhMwqeE81ooS3osyxCbP2PCTr760IezN-i3XO7k5f1bE-e9gyfIM90WphwQBLvYvaUuWi2sJz12ypg5olmPSwD9sOWxz8gK0yG7G3N_Vhuwe3wGsEbx2rRCYfZN8Fbvgu3tvyA04oyezTIInRNVJSoH1bzZIcG8IVMVtb_4okdsqZ_lqRlTxZTMnkX6WKAaZVnW1JsmF5ZVd12TzhuWCZZpcjKDnq1-Y6kGTSMpDkSPYkCcPxxA_c6Sz2ZuFk6gaUHEgSBNNx5MZuEAduFIVudKLkXyvpjuMw8uPYnfmTaeQGUUQJcmHfzKL7atof5_QfhwdIdA?type=png)](https://mermaid.live/edit#pako:eNp1VMuO4jAQ_JWWJfbkoLwIJLfRoJVGWiR2Zy6z4mLiJliT2JHjIFjEv6_zAoaHT7bbVdVdbftIUsWRJCRj0piVBDuMMDnCUitep0YoCR-iwFxI7MKcGfypdMEMwKcdzmLhzOddjO1F1cdGn86ocEZ84Ey_3qRBvWM5-Jwdum3cp3nNsYKNFu1mt11hJ_yL1TLdwjJnfWCOO8xVWaA08GgkzAJ3CJR5FHzXjxzP8YJmyu8J5kriHUGqhaFQiBwrY-MU2MZmDczr8DaVA7wbpRFeylKrppwHeOZfgBRmvbhF9CjkD7O_ku3z8M48Pu1I_mCOrEJ4NpIdaovcDQb4jjfpoa8abe8GDyzpS5qq-mJlD-Vn0XVIb1tyZWAXeEdjhMwqeE81ooS3osyxCbP2PCTr760IezN-i3XO7k5f1bE-e9gyfIM90WphwQBLvYvaUuWi2sJz12ypg5olmPSwD9sOWxz8gK0yG7G3N_Vhuwe3wGsEbx2rRCYfZN8Fbvgu3tvyA04oyezTIInRNVJSoH1bzZIcG8IVMVtb_4okdsqZ_lqRlTxZTMnkX6WKAaZVnW1JsmF5ZVd12TzhuWCZZpcjKDnq1-Y6kGTSMpDkSPYkCcPxxA_c6Sz2ZuFk6gaUHEgSBNNx5MZuEAduFIVudKLkXyvpjuMw8uPYnfmTaeQGUUQJcmHfzKL7atof5_QfhwdIdA)
-## Why are we building this?
-You've probably seen a million apps like this one, but let us tell you why this one is special.
 
-There are a lot of apps like these in the app store, most of them either block you behind a pay-wall just to use the favourite Athan sound of yours or they're completely free but poor in features. **Our goal** is to make it possible to build that perfect app that **combines the best of the two worlds** by the support of collaborators and users.
+**Prayer Times** is an open-source, ad-free, offline Flutter app that helps Muslims around the world stay on track with their daily prayers.
+
+## Why are we building this?
+
+You've probably seen a million apps like this one — but let us tell you why this one is different.
+
+Most prayer apps either paywall your favorite Athan sound or are free but lacking in features. **Our goal** is to build the app that combines the best of both worlds, powered by community collaboration.
 
 ## Our Vision
+
 The aim of this project is to provide an easy way for Muslims around the world to stay on track with their prayer times.
 
-**We take it upon ourselves** to keep this project ad-free, offline and open-source.
+**We take it upon ourselves** to keep this project ad-free, offline, and open-source.
 
-We're not just making another prayer times app. We're building the most **feature rich, intuitive app**, all while keeping it **free-to-use**.
+We're not just making another prayer times app. We're building the most **feature-rich, intuitive** app we can, while keeping it **free to use**.
 
-## how to install
-1. clone the repository.
-2. cd into the project folder.
-3. run `flutter pub get`
-4. You're ready to `run` the app!
+## Getting Started
+
+The app currently targets **Android** only.
+
+1. Clone the repository.
+2. `cd` into the project folder.
+3. Run `flutter pub get`.
+4. Run the app with `flutter run`.
 
 ## Collaboration Guidelines
 
-Your participation is welcome!  
-**Refer to the [docs](./docs) for technical details.**
+Your participation is welcome! Refer to the [docs](./docs) for technical details.
 
-**Important Practices:**
-- Always create a new branch for your work. Do not edit directly on the `main` branch.
-- Branch names should follow this format:  
-  `<type>/<short-description>`
+**Important practices:**
+- Always create a new branch for your work. Do not commit directly to `main`.
+- Branch names should follow this format: `<type>/<short-description>`
 - **Accepted types and use cases:**
-  - **feature/**: For developing new features or significant enhancements.
-  - **bugfix/**: For fixing bugs or resolving issues.
-  - **hotfix/**: For urgent or critical fixes, typically in production.
-  - **chore/**: For routine tasks, maintenance, or non-feature changes (e.g., dependency updates, refactoring).
-  - **docs/**: For documentation changes only.
-  - **test/**: For adding, updating, or improving tests.
-  - **devops/**: For CI/CD and GitHub actions.
+  - **feature/**: New features or significant enhancements.
+  - **bugfix/**: Bugfixes or issue resolution.
+  - **hotfix/**: Urgent or critical fixes, typically in production.
+  - **chore/**: Routine maintenance, dependency updates, or refactoring.
+  - **docs/**: Documentation-only changes.
+  - **test/**: Adding, updating, or improving tests.
+  - **devops/**: CI/CD and GitHub Actions changes.
 
-This convention keeps the project organized and streamlines collaboration.
+When opening a pull request, please follow the template at `.github/PULL_REQUEST_TEMPLATE.md`.
