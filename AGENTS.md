@@ -75,7 +75,7 @@ lib/
 
 All defaults are defined in `lib/core/services/storage/hive/hive_storage.dart` and documented in `docs/storage.md`.
 
-On startup the app fetches the device GPS position (when permission is granted) and the device IANA timezone (via `flutter_timezone`) and persists them into the `general` box, so prayer times follow the real user location. 
+On startup the app fetches the device GPS position (when permission is granted) and the device IANA timezone (via `flutter_timezone`) and persists them into the `general` box, so prayer times follow the real user location.
 If location is unavailable, the stored values (Cairo defaults) are kept. All downstream consumers (`PrayerTimes`, notifications) read from storage — never hardcode coordinates or timezones.
 
 **Prayer times** (8 entries, in order):
