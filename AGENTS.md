@@ -29,7 +29,7 @@
 
 ### Directory Structure
 
-```
+``` text
 lib/
 ├── main.dart                              # Entry point, GoRouter config, Workmanager setup
 ├── app/
@@ -75,7 +75,8 @@ lib/
 
 All defaults are defined in `lib/core/services/storage/hive/hive_storage.dart` and documented in `docs/storage.md`.
 
-On startup the app fetches the device GPS position (when permission is granted) and the device IANA timezone (via `flutter_timezone`) and persists them into the `general` box, so prayer times follow the real user location. If location is unavailable, the stored values (Cairo defaults) are kept. All downstream consumers (`PrayerTimes`, notifications) read from storage — never hardcode coordinates or timezones.
+On startup the app fetches the device GPS position (when permission is granted) and the device IANA timezone (via `flutter_timezone`) and persists them into the `general` box, so prayer times follow the real user location. 
+If location is unavailable, the stored values (Cairo defaults) are kept. All downstream consumers (`PrayerTimes`, notifications) read from storage — never hardcode coordinates or timezones.
 
 **Prayer times** (8 entries, in order):
 `fajr`, `sunrise`, `dhuhr`, `asr`, `maghrib`, `isha`, `midnight`, `lastThird`
@@ -193,7 +194,7 @@ Branching convention: `<type>/<short-description>`
 | Type | Purpose |
 |------|---------|
 | `feature/` | New features or significant enhancements |
-| `bugfix/` | Bug fixes or issue resolution |
+| `bugfix/` | Bugfixes or issue resolution |
 | `hotfix/` | Urgent/critical production fixes |
 | `chore/` | Routine maintenance, dependency updates, refactoring |
 | `docs/` | Documentation-only changes |

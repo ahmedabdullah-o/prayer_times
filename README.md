@@ -34,7 +34,7 @@ Your participation is welcome! Refer to the [docs](./docs) for technical details
 - Branch names should follow this format: `<type>/<short-description>`
 - **Accepted types and use cases:**
   - **feature/**: New features or significant enhancements.
-  - **bugfix/**: Bug fixes or issue resolution.
+  - **bugfix/**: Bugfixes or issue resolution.
   - **hotfix/**: Urgent or critical fixes, typically in production.
   - **chore/**: Routine maintenance, dependency updates, or refactoring.
   - **docs/**: Documentation-only changes.
