@@ -62,8 +62,8 @@ class NotificationModel {
   ///
   /// Each sound gets its own Android notification channel because on Android
   /// 8+ the channel sound overrides any per-notification sound.
-  /// [AthanSoundEnums.defaultSound] plays no custom Athan audio (system
-  /// notification sound only).
+  /// [AthanSoundEnums.defaultSound] uses the system default notification
+  /// sound instead of a custom Athan audio.
   static NotificationDetails prayerNotificationDetails(AthanSoundEnums sound) {
     final bool withAthanSound = sound != AthanSoundEnums.defaultSound;
     return NotificationDetails(
@@ -74,7 +74,7 @@ class NotificationModel {
             'Prayer time notifications using the ${sound.name} Athan sound',
         importance: Importance.max,
         priority: Priority.high,
-        playSound: withAthanSound,
+        playSound: true,
         enableVibration: true,
         category: AndroidNotificationCategory.alarm,
         visibility: NotificationVisibility.public,
